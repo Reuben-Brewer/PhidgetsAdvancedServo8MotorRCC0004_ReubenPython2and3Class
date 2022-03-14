@@ -1,9 +1,11 @@
 ########################  
+
 PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class
 
 Wrapper (including ability to hook to Tkinter GUI) to control Phidgets Advanced Servo 8-Motor RCC0004_0 (non VINT).
 
 From Phidgets' website:
+
 "The PhidgetAdvancedServo 8-Motor allows you to control the position, velocity,
 and acceleration of up to 8 RC servo motors. It requires a 8-30VDC external power supply; its switching power supply
 allows the RCC0004 to efficiently operate from 8 to 30 VDC and can be used with a wide range of batteries.
@@ -27,12 +29,16 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision E, 03/01/2022
+Software Revision F, 03/13/2022
 
 Verified working on: 
+
 Python 2.7, 3.8.
+
 Windows 8.1, 10 64-bit
+
 Raspberry Pi Buster 
+
 (no Mac testing yet)
 
 *NOTE THAT YOU MUST INSTALL BOTH THE Phidget22 LIBRARY AS WELL AS THE PYTHON MODULE.*
