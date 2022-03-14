@@ -1,4 +1,5 @@
-########################  
+########################
+
 PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class
 
 Wrapper (including ability to hook to Tkinter GUI) to control Phidgets Advanced Servo 8-Motor RCC0004_0 (non VINT).
@@ -25,7 +26,7 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision E, 03/01/2022
+Software Revision F, 03/13/2022
 
 Verified working on: 
 Python 2.7, 3.8.
