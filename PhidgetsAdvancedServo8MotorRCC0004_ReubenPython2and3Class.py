@@ -6,22 +6,28 @@ reuben.brewer@gmail.com
 www.reubotics.com
 
 Apache 2 License
-Software Revision F, 03/13/2022
+Software Revision I, 09/21/2022
 
-Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit and Raspberry Pi Buster (no Mac testing yet).
+Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit, Ubuntu 20.04, and Raspberry Pi Buster (no Mac testing yet).
 '''
 
 __author__ = 'reuben.brewer'
 
-import os, sys, platform
-import time, datetime
+###########################################################
+import os
+import sys
+import platform
+import time
+import datetime
 import math
 import collections
+from copy import * #for deepcopy
 import inspect #To enable 'TellWhichFileWereIn'
 import threading
 import traceback
+###########################################################
 
-###############
+###########################################################
 if sys.version_info[0] < 3:
     from Tkinter import * #Python 2
     import tkFont
@@ -30,39 +36,36 @@ else:
     from tkinter import * #Python 3
     import tkinter.font as tkFont #Python 3
     from tkinter import ttk
-###############
+###########################################################
 
-###############
+###########################################################
 if sys.version_info[0] < 3:
     import Queue  # Python 2
 else:
     import queue as Queue  # Python 3
-###############
+###########################################################
 
-###############
+###########################################################
 if sys.version_info[0] < 3:
     from builtins import raw_input as input
 else:
     from future.builtins import input as input
-############### #"sudo pip3 install future" (Python 3) AND "sudo pip install future" (Python 2)
+########################################################### "sudo pip3 install future" (Python 3) AND "sudo pip install future" (Python 2)
 
-###############
+###########################################################
 import platform
 if platform.system() == "Windows":
     import ctypes
     winmm = ctypes.WinDLL('winmm')
     winmm.timeBeginPeriod(1) #Set minimum timer resolution to 1ms so that time.sleep(0.001) behaves properly.
-###############
+###########################################################
 
 ###########################################################
-###########################################################
-#To install Phidget22, enter folder "Phidget22Python_1.0.0.20190107\Phidget22Python" and type "python setup.py install"
 from Phidget22.PhidgetException import *
 from Phidget22.Phidget import *
 from Phidget22.Devices.Log import *
 from Phidget22.LogLevel import *
 from Phidget22.Devices.RCServo import *
-###########################################################
 ###########################################################
 
 class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclass the Tkinter Frame
@@ -73,27 +76,39 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
 
         print("#################### PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__ starting. ####################")
 
+        #########################################################
+        #########################################################
         self.EXIT_PROGRAM_FLAG = 0
-        self.OBJECT_CREATED_SUCCESSFULLY_FLAG = -1
+        self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
         self.EnableInternal_MyPrint_Flag = 0
         self.MainThread_still_running_flag = 0
+        self.MostRecentDataDict = dict()
+        #########################################################
+        #########################################################
 
-        self.ServosList_PhidgetsServoObjects = list()
-
+        #########################################################
+        #########################################################
         self.NumberOfServos = 8
 
+        self.ServosList_PhidgetsServoObjects = list()
         self.ServosList_AttachedAndOpenFlag = [-1.0] * self.NumberOfServos
         self.ServosList_ErrorCallbackFiredFlag = [-1.0] * self.NumberOfServos
+        #########################################################
+        #########################################################
 
+        #########################################################
+        #########################################################
         self.ServosList_ListOfOnAttachCallbackFunctionNames = [self.Servo0onAttachCallback, self.Servo1onAttachCallback, self.Servo2onAttachCallback, self.Servo3onAttachCallback, self.Servo4onAttachCallback, self.Servo5onAttachCallback, self.Servo6onAttachCallback, self.Servo7onAttachCallback]
         self.ServosList_ListOfOnDetachCallbackFunctionNames = [self.Servo0onDetachCallback, self.Servo1onDetachCallback, self.Servo2onDetachCallback, self.Servo3onDetachCallback, self.Servo4onDetachCallback, self.Servo5onDetachCallback, self.Servo6onDetachCallback, self.Servo7onDetachCallback]
         self.ServosList_ListOfOnErrorCallbackFunctionNames = [self.Servo0onErrorCallback, self.Servo1onErrorCallback, self.Servo2onErrorCallback, self.Servo3onErrorCallback, self.Servo4onErrorCallback, self.Servo5onErrorCallback, self.Servo6onErrorCallback, self.Servo7onErrorCallback]
         self.ServosList_ListOfOnPositionChangeCallbackFunctionNames = [self.Servo0onPositionChangeCallback, self.Servo1onPositionChangeCallback, self.Servo2onPositionChangeCallback, self.Servo3onPositionChangeCallback, self.Servo4onPositionChangeCallback, self.Servo5onPositionChangeCallback, self.Servo6onPositionChangeCallback, self.Servo7onPositionChangeCallback]
         self.ServosList_ListOfOnVelocityChangeCallbackFunctionNames = [self.Servo0onVelocityChangeCallback, self.Servo1onVelocityChangeCallback, self.Servo2onVelocityChangeCallback, self.Servo3onVelocityChangeCallback, self.Servo4onVelocityChangeCallback, self.Servo5onVelocityChangeCallback, self.Servo6onVelocityChangeCallback, self.Servo7onVelocityChangeCallback]
         #self.ServosList_ListOfOnTargetPositionReachedCallbackFunctionNames = [self.Servo0onTargetPositionReachedCallback, self.Servo1onTargetPositionReachedCallback, self.Servo2onTargetPositionReachedCallback, self.Servo3onTargetPositionReachedCallback, self.Servo4onTargetPositionReachedCallback, self.Servo5onTargetPositionReachedCallback, self.Servo6onTargetPositionReachedCallback, self.Servo7onTargetPositionReachedCallback]
+        #########################################################
+        #########################################################
 
-
-        ####################################
+        #########################################################
+        #########################################################
         self.ServosList_Position_ActualRxFromBoard = [-11111.0] * self.NumberOfServos
         self.ServosList_Position_NeedsToBeChangedFlag = [1] * self.NumberOfServos
         self.ServosList_Position_ToBeSet = [-11111.0] * self.NumberOfServos
@@ -106,9 +121,11 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
         self.ServosList_Position_GUIscale_Value = list()
         self.ServosList_Position_GUIscale_ScaleObject = list()
         self.ServosList_Position_GUIscale_NeedsToBeChangedFlag = [0] * self.NumberOfServos
-        ####################################
+        #########################################################
+        #########################################################
 
-        ####################################
+        #########################################################
+        #########################################################
         self.ServosList_Velocity_ActualRxFromBoard = [-11111.0] * self.NumberOfServos
         self.ServosList_Velocity_NeedsToBeChangedFlag = [1] * self.NumberOfServos
         self.ServosList_Velocity_ToBeSet = [-11111.0] * self.NumberOfServos
@@ -121,9 +138,11 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
         self.ServosList_Velocity_GUIscale_Value = list()
         self.ServosList_Velocity_GUIscale_ScaleObject = list()
         self.ServosList_Velocity_GUIscale_NeedsToBeChangedFlag = [0] * self.NumberOfServos
-        ####################################
+        #########################################################
+        #########################################################
 
-        ####################################
+        #########################################################
+        #########################################################
         self.ServosList_EngagedState_ActualRxFromBoard = [-1] * self.NumberOfServos
         self.ServosList_EngagedState_NeedsToBeChangedFlag = [1] * self.NumberOfServos
         self.ServosList_EngagedState_ToBeSet = [-1] * self.NumberOfServos
@@ -132,9 +151,11 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
         self.ServosList_EngagedState_GUIcheckbutton_Value = list()
         self.ServosList_EngagedState_GUIcheckbutton_CheckbuttonObject = list()
         self.ServosList_EngagedState_GUIcheckbutton_NeedsToBeChangedFlag = [0] * self.NumberOfServos
-        ####################################
+        #########################################################
+        #########################################################
 
-        ####################################
+        #########################################################
+        #########################################################
         self.ServosList_SpeedRampingState_ActualRxFromBoard = [-1] * self.NumberOfServos
         self.ServosList_SpeedRampingState_NeedsToBeChangedFlag = [1] * self.NumberOfServos
         self.ServosList_SpeedRampingState_ToBeSet = [-1] * self.NumberOfServos
@@ -143,19 +164,20 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
         self.ServosList_SpeedRampingState_GUIcheckbutton_Value = list()
         self.ServosList_SpeedRampingState_GUIcheckbutton_CheckbuttonObject = list()
         self.ServosList_SpeedRampingState_GUIcheckbutton_NeedsToBeChangedFlag = [0] * self.NumberOfServos
-        ####################################
+        #########################################################
+        #########################################################
 
-        ####################################
+        #########################################################
+        #########################################################
         self.ServosList_PulseWidthMin_PhidgetsUnits_UserSet = [-11111.0] * self.NumberOfServos
         self.ServosList_PulseWidthMax_PhidgetsUnits_UserSet = [-11111.0] * self.NumberOfServos
 
         self.ServosList_DataIntervalMilliseconds = [-11111.0] * self.NumberOfServos
-        ####################################
-        
-        self.MostRecentDataDict = dict()
+        #########################################################
+        #########################################################
 
-        ##########################################
-        ##########################################
+        #########################################################
+        #########################################################
         if platform.system() == "Linux":
 
             if "raspberrypi" in platform.uname(): #os.uname() doesn't work in windows
@@ -172,194 +194,217 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
         else:
             self.my_platform = "other"
 
-        print("The OS platform is: " + self.my_platform)
-        ##########################################
-        ##########################################
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: The OS platform is: " + self.my_platform)
+        #########################################################
+        #########################################################
 
-        ##########################################
-        ##########################################
+        #########################################################
+        #########################################################
         if "GUIparametersDict" in setup_dict:
             self.GUIparametersDict = setup_dict["GUIparametersDict"]
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "USE_GUI_FLAG" in self.GUIparametersDict:
                 self.USE_GUI_FLAG = self.PassThrough0and1values_ExitProgramOtherwise("USE_GUI_FLAG", self.GUIparametersDict["USE_GUI_FLAG"])
             else:
                 self.USE_GUI_FLAG = 0
 
-            print("USE_GUI_FLAG = " + str(self.USE_GUI_FLAG))
-            ##########################################
+            print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: USE_GUI_FLAG: " + str(self.USE_GUI_FLAG))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "root" in self.GUIparametersDict:
                 self.root = self.GUIparametersDict["root"]
-                self.RootIsOwnedExternallyFlag = 1
             else:
-                self.root = None
-                self.RootIsOwnedExternallyFlag = 0
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, must pass in 'root'")
+                return
+            #########################################################
+            #########################################################
 
-            print("RootIsOwnedExternallyFlag = " + str(self.RootIsOwnedExternallyFlag))
-            ##########################################
-
-            ##########################################
-            if "GUI_RootAfterCallbackInterval_Milliseconds" in self.GUIparametersDict:
-                self.GUI_RootAfterCallbackInterval_Milliseconds = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_RootAfterCallbackInterval_Milliseconds", self.GUIparametersDict["GUI_RootAfterCallbackInterval_Milliseconds"], 0.0, 1000.0))
-            else:
-                self.GUI_RootAfterCallbackInterval_Milliseconds = 30
-
-            print("GUI_RootAfterCallbackInterval_Milliseconds = " + str(self.GUI_RootAfterCallbackInterval_Milliseconds))
-            ##########################################
-
-            ##########################################
+            #########################################################
+            #########################################################
             if "EnableInternal_MyPrint_Flag" in self.GUIparametersDict:
                 self.EnableInternal_MyPrint_Flag = self.PassThrough0and1values_ExitProgramOtherwise("EnableInternal_MyPrint_Flag", self.GUIparametersDict["EnableInternal_MyPrint_Flag"])
             else:
                 self.EnableInternal_MyPrint_Flag = 0
 
-            print("EnableInternal_MyPrint_Flag: " + str(self.EnableInternal_MyPrint_Flag))
-            ##########################################
+            print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: EnableInternal_MyPrint_Flag: " + str(self.EnableInternal_MyPrint_Flag))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "PrintToConsoleFlag" in self.GUIparametersDict:
                 self.PrintToConsoleFlag = self.PassThrough0and1values_ExitProgramOtherwise("PrintToConsoleFlag", self.GUIparametersDict["PrintToConsoleFlag"])
             else:
                 self.PrintToConsoleFlag = 1
 
-            print("PrintToConsoleFlag: " + str(self.PrintToConsoleFlag))
-            ##########################################
+            print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: PrintToConsoleFlag: " + str(self.PrintToConsoleFlag))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "NumberOfPrintLines" in self.GUIparametersDict:
                 self.NumberOfPrintLines = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("NumberOfPrintLines", self.GUIparametersDict["NumberOfPrintLines"], 0.0, 50.0))
             else:
                 self.NumberOfPrintLines = 10
 
-            print("NumberOfPrintLines = " + str(self.NumberOfPrintLines))
-            ##########################################
+            print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: NumberOfPrintLines = " + str(self.NumberOfPrintLines))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "UseBorderAroundThisGuiObjectFlag" in self.GUIparametersDict:
                 self.UseBorderAroundThisGuiObjectFlag = self.PassThrough0and1values_ExitProgramOtherwise("UseBorderAroundThisGuiObjectFlag", self.GUIparametersDict["UseBorderAroundThisGuiObjectFlag"])
             else:
                 self.UseBorderAroundThisGuiObjectFlag = 0
 
-            print("UseBorderAroundThisGuiObjectFlag: " + str(self.UseBorderAroundThisGuiObjectFlag))
-            ##########################################
+            print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: UseBorderAroundThisGuiObjectFlag: " + str(self.UseBorderAroundThisGuiObjectFlag))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "GUI_ROW" in self.GUIparametersDict:
                 self.GUI_ROW = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_ROW", self.GUIparametersDict["GUI_ROW"], 0.0, 1000.0))
             else:
                 self.GUI_ROW = 0
 
-            print("GUI_ROW = " + str(self.GUI_ROW))
-            ##########################################
+            print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: GUI_ROW: " + str(self.GUI_ROW))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "GUI_COLUMN" in self.GUIparametersDict:
                 self.GUI_COLUMN = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_COLUMN", self.GUIparametersDict["GUI_COLUMN"], 0.0, 1000.0))
             else:
                 self.GUI_COLUMN = 0
 
-            print("GUI_COLUMN = " + str(self.GUI_COLUMN))
-            ##########################################
+            print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: GUI_COLUMN: " + str(self.GUI_COLUMN))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "GUI_PADX" in self.GUIparametersDict:
                 self.GUI_PADX = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_PADX", self.GUIparametersDict["GUI_PADX"], 0.0, 1000.0))
             else:
                 self.GUI_PADX = 0
 
-            print("GUI_PADX = " + str(self.GUI_PADX))
-            ##########################################
+            print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: GUI_PADX: " + str(self.GUI_PADX))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "GUI_PADY" in self.GUIparametersDict:
                 self.GUI_PADY = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_PADY", self.GUIparametersDict["GUI_PADY"], 0.0, 1000.0))
             else:
                 self.GUI_PADY = 0
 
-            print("GUI_PADY = " + str(self.GUI_PADY))
-            ##########################################
+            print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: GUI_PADY: " + str(self.GUI_PADY))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "GUI_ROWSPAN" in self.GUIparametersDict:
-                self.GUI_ROWSPAN = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_ROWSPAN", self.GUIparametersDict["GUI_ROWSPAN"], 0.0, 1000.0))
+                self.GUI_ROWSPAN = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_ROWSPAN", self.GUIparametersDict["GUI_ROWSPAN"], 1.0, 1000.0))
             else:
-                self.GUI_ROWSPAN = 0
+                self.GUI_ROWSPAN = 1
 
-            print("GUI_ROWSPAN = " + str(self.GUI_ROWSPAN))
-            ##########################################
+            print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: GUI_ROWSPAN: " + str(self.GUI_ROWSPAN))
+            #########################################################
+            #########################################################
 
-            ##########################################
+            #########################################################
+            #########################################################
             if "GUI_COLUMNSPAN" in self.GUIparametersDict:
-                self.GUI_COLUMNSPAN = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_COLUMNSPAN", self.GUIparametersDict["GUI_COLUMNSPAN"], 0.0, 1000.0))
+                self.GUI_COLUMNSPAN = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("GUI_COLUMNSPAN", self.GUIparametersDict["GUI_COLUMNSPAN"], 1.0, 1000.0))
             else:
-                self.GUI_COLUMNSPAN = 0
+                self.GUI_COLUMNSPAN = 1
 
-            print("GUI_COLUMNSPAN = " + str(self.GUI_COLUMNSPAN))
-            ##########################################
+            print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: GUI_COLUMNSPAN: " + str(self.GUI_COLUMNSPAN))
+            #########################################################
+            #########################################################
 
         else:
             self.GUIparametersDict = dict()
             self.USE_GUI_FLAG = 0
-            print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: No GUIparametersDict present, setting USE_GUI_FLAG = " + str(self.USE_GUI_FLAG))
+            print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: No GUIparametersDict present, setting USE_GUI_FLAG: " + str(self.USE_GUI_FLAG))
 
-        print("GUIparametersDict = " + str(self.GUIparametersDict))
-        ##########################################
-        ##########################################
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: GUIparametersDict: " + str(self.GUIparametersDict))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "DesiredSerialNumber" in setup_dict:
             try:
                 self.DesiredSerialNumber = int(setup_dict["DesiredSerialNumber"])
             except:
-                print("ERROR: DesiredSerialNumber invalid.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error: DesiredSerialNumber invalid.")
         else:
-            self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 0
-            print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__ ERROR: Must initialize object with 'DesiredSerialNumber' argument.")
-            return
+            self.DesiredSerialNumber = -1
         
-        print("DesiredSerialNumber: " + str(self.DesiredSerialNumber))
-        ##########################################
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: DesiredSerialNumber: " + str(self.DesiredSerialNumber))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "NameToDisplay_UserSet" in setup_dict:
             self.NameToDisplay_UserSet = str(setup_dict["NameToDisplay_UserSet"])
         else:
             self.NameToDisplay_UserSet = ""
-        ##########################################
 
-        ##########################################
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: NameToDisplay_UserSet: " + str(self.NameToDisplay_UserSet))
+        #########################################################
+        #########################################################
+
+        #########################################################
+        #########################################################
         if "WaitForAttached_TimeoutDuration_Milliseconds" in setup_dict:
             self.WaitForAttached_TimeoutDuration_Milliseconds = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("WaitForAttached_TimeoutDuration_Milliseconds", setup_dict["WaitForAttached_TimeoutDuration_Milliseconds"], 0.0, 60000.0))
 
         else:
             self.WaitForAttached_TimeoutDuration_Milliseconds = 5000
 
-        print("WaitForAttached_TimeoutDuration_Milliseconds: " + str(self.WaitForAttached_TimeoutDuration_Milliseconds))
-        ##########################################
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: WaitForAttached_TimeoutDuration_Milliseconds: " + str(self.WaitForAttached_TimeoutDuration_Milliseconds))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "UsePhidgetsLoggingInternalToThisClassObjectFlag" in setup_dict:
             self.UsePhidgetsLoggingInternalToThisClassObjectFlag = self.PassThrough0and1values_ExitProgramOtherwise("UsePhidgetsLoggingInternalToThisClassObjectFlag", setup_dict["UsePhidgetsLoggingInternalToThisClassObjectFlag"])
         else:
             self.UsePhidgetsLoggingInternalToThisClassObjectFlag = 1
 
-        print("UsePhidgetsLoggingInternalToThisClassObjectFlag: " + str(self.UsePhidgetsLoggingInternalToThisClassObjectFlag))
-        ##########################################
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: UsePhidgetsLoggingInternalToThisClassObjectFlag: " + str(self.UsePhidgetsLoggingInternalToThisClassObjectFlag))
+        #########################################################
+        #########################################################
 
-       ##########################################
+        #########################################################
+        #########################################################
         if "MainThread_TimeToSleepEachLoop" in setup_dict:
             self.MainThread_TimeToSleepEachLoop = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("MainThread_TimeToSleepEachLoop", setup_dict["MainThread_TimeToSleepEachLoop"], 0.001, 100000)
 
         else:
             self.MainThread_TimeToSleepEachLoop = 0.005
 
-        print("MainThread_TimeToSleepEachLoop: " + str(self.MainThread_TimeToSleepEachLoop))
-        ##########################################
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: MainThread_TimeToSleepEachLoop: " + str(self.MainThread_TimeToSleepEachLoop))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "ServosList_DataIntervalMilliseconds" in setup_dict:
             ServosList_DataIntervalMilliseconds_TEMP = setup_dict["ServosList_DataIntervalMilliseconds"]
 
@@ -370,20 +415,22 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_DataIntervalMilliseconds[ServoChannel] = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_DataIntervalMilliseconds, ServoChannel " + str(ServoChannel), ServosList_DataIntervalMilliseconds_TEMP_ELEMENT, 32.0, 60000.0))
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_DataIntervalMilliseconds must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_DataIntervalMilliseconds must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_DataIntervalMilliseconds must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_DataIntervalMilliseconds must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
             self.ServosList_DataIntervalMilliseconds = [32]*self.NumberOfServos #32ms, fastest update rate possible
 
-        print("ServosList_DataIntervalMilliseconds: " + str(self.ServosList_DataIntervalMilliseconds))
-        ##########################################
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: ServosList_DataIntervalMilliseconds: " + str(self.ServosList_DataIntervalMilliseconds))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "ServosList_EngagedState_Starting" in setup_dict:
             ServosList_EngagedState_Starting_TEMP = setup_dict["ServosList_EngagedState_Starting"]
 
@@ -394,24 +441,28 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_EngagedState_Starting[ServoChannel] = int(self.PassThrough0and1values_ExitProgramOtherwise("ServosList_EngagedState_Starting, ServoChannel " + str(ServoChannel), ServosList_EngagedState_Starting_TEMP_ELEMENT))
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_EngagedState_Starting must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_EngagedState_Starting must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_EngagedState_Starting must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_EngagedState_Starting must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
             self.ServosList_EngagedState_Starting = [0]*self.NumberOfServos
 
-        print("ServosList_EngagedState_Starting: " + str(self.ServosList_EngagedState_Starting))
-        ##########################################
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: ServosList_EngagedState_Starting: " + str(self.ServosList_EngagedState_Starting))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         self.ServosList_EngagedState_ToBeSet = list(self.ServosList_EngagedState_Starting)
-        ##########################################
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "ServosList_SpeedRampingState_Starting" in setup_dict:
             ServosList_SpeedRampingState_Starting_TEMP = setup_dict["ServosList_SpeedRampingState_Starting"]
 
@@ -422,24 +473,28 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_SpeedRampingState_Starting[ServoChannel] = int(self.PassThrough0and1values_ExitProgramOtherwise("ServosList_SpeedRampingState_Starting, ServoChannel " + str(ServoChannel), ServosList_SpeedRampingState_Starting_TEMP_ELEMENT))
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_SpeedRampingState_Starting must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_SpeedRampingState_Starting must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_SpeedRampingState_Starting must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_SpeedRampingState_Starting must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
             self.ServosList_SpeedRampingState_Starting = [0]*self.NumberOfServos
 
-        print("ServosList_SpeedRampingState_Starting: " + str(self.ServosList_SpeedRampingState_Starting))
-        ##########################################
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: ServosList_SpeedRampingState_Starting: " + str(self.ServosList_SpeedRampingState_Starting))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         self.ServosList_SpeedRampingState_ToBeSet = list(self.ServosList_SpeedRampingState_Starting)
-        ##########################################
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "ServosList_Position_Min_PhidgetsUnits_UserSet" in setup_dict:
             ServosList_Position_Min_PhidgetsUnits_UserSet_TEMP = setup_dict["ServosList_Position_Min_PhidgetsUnits_UserSet"]
 
@@ -450,20 +505,22 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_Position_Min_PhidgetsUnits_UserSet[ServoChannel] = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_Position_Min_PhidgetsUnits_UserSet, ServoChannel " + str(ServoChannel), ServosList_Position_Min_PhidgetsUnits_TEMP_ELEMENT, -1000000.0, 1000000.0)
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_Position_Min_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Position_Min_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_Position_Min_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Position_Min_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
             self.ServosList_Position_Min_PhidgetsUnits_UserSet = [0.0]*self.NumberOfServos
 
-        print("ServosList_Position_Min_PhidgetsUnits_UserSet: " + str(self.ServosList_Position_Min_PhidgetsUnits_UserSet))
-        ##########################################
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: ServosList_Position_Min_PhidgetsUnits_UserSet: " + str(self.ServosList_Position_Min_PhidgetsUnits_UserSet))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "ServosList_Position_Max_PhidgetsUnits_UserSet" in setup_dict:
             ServosList_Position_Max_PhidgetsUnits_UserSet_TEMP = setup_dict["ServosList_Position_Max_PhidgetsUnits_UserSet"]
 
@@ -474,27 +531,31 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_Position_Max_PhidgetsUnits_UserSet[ServoChannel] = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_Position_Max_PhidgetsUnits_UserSet, ServoChannel " + str(ServoChannel), ServosList_Position_Max_PhidgetsUnits_TEMP_ELEMENT, -1000000.0, 1000000.0)
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_Position_Max_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Position_Max_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_Position_Max_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Position_Max_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
             self.ServosList_Position_Max_PhidgetsUnits_UserSet = [180.0]*self.NumberOfServos
 
-        print("ServosList_Position_Max_PhidgetsUnits_UserSet: " + str(self.ServosList_Position_Max_PhidgetsUnits_UserSet))
-        ##########################################
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: ServosList_Position_Max_PhidgetsUnits_UserSet: " + str(self.ServosList_Position_Max_PhidgetsUnits_UserSet))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         for ServoChannel in range(0, self.NumberOfServos):
             if self.ServosList_Position_Max_PhidgetsUnits_UserSet[ServoChannel] <= self.ServosList_Position_Min_PhidgetsUnits_UserSet[ServoChannel]:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: Position_Max is smaller than or equal to Position_Min for ServoChannel " + str(ServoChannel))
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, Position_Max is smaller than or equal to Position_Min for ServoChannel " + str(ServoChannel))
                 return
-        ##########################################
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "ServosList_Position_Starting_PhidgetsUnits" in setup_dict:
             ServosList_Position_Starting_PhidgetsUnits_TEMP = setup_dict["ServosList_Position_Starting_PhidgetsUnits"]
 
@@ -505,24 +566,28 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_Position_Starting_PhidgetsUnits[ServoChannel] = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_Position_Starting_PhidgetsUnits, ServoChannel " + str(ServoChannel), ServosList_Position_Starting_PhidgetsUnits_TEMP_ELEMENT, self.ServosList_Position_Min_PhidgetsUnits_UserSet[ServoChannel], self.ServosList_Position_Max_PhidgetsUnits_UserSet[ServoChannel])
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_Position_Starting_PhidgetsUnits must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Position_Starting_PhidgetsUnits must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_Position_Starting_PhidgetsUnits must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Position_Starting_PhidgetsUnits must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
             self.ServosList_Position_Starting_PhidgetsUnits = list(self.ServosList_Position_Min_PhidgetsUnits_UserSet)
 
-        print("ServosList_Position_Starting_PhidgetsUnits: " + str(self.ServosList_Position_Starting_PhidgetsUnits))
-        ##########################################
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: ServosList_Position_Starting_PhidgetsUnits: " + str(self.ServosList_Position_Starting_PhidgetsUnits))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         self.ServosList_Position_ToBeSet = list(self.ServosList_Position_Starting_PhidgetsUnits)
-        ##########################################
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "ServosList_Velocity_Min_PhidgetsUnits_UserSet" in setup_dict:
             ServosList_Velocity_Min_PhidgetsUnits_UserSet_TEMP = setup_dict["ServosList_Velocity_Min_PhidgetsUnits_UserSet"]
 
@@ -533,20 +598,22 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_Velocity_Min_PhidgetsUnits_UserSet[ServoChannel] = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_Velocity_Min_PhidgetsUnits_UserSet, ServoChannel " + str(ServoChannel), ServosList_Velocity_Min_PhidgetsUnits_TEMP_ELEMENT, 0.0, 6467.368)
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_Velocity_Min_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Velocity_Min_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_Velocity_Min_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Velocity_Min_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
             self.ServosList_Velocity_Min_PhidgetsUnits_UserSet = [0.0]*self.NumberOfServos
 
-        print("ServosList_Velocity_Min_PhidgetsUnits_UserSet: " + str(self.ServosList_Velocity_Min_PhidgetsUnits_UserSet))
-        ##########################################
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: ServosList_Velocity_Min_PhidgetsUnits_UserSet: " + str(self.ServosList_Velocity_Min_PhidgetsUnits_UserSet))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "ServosList_Velocity_Max_PhidgetsUnits_UserSet" in setup_dict:
             ServosList_Velocity_Max_PhidgetsUnits_UserSet_TEMP = setup_dict["ServosList_Velocity_Max_PhidgetsUnits_UserSet"]
 
@@ -557,27 +624,31 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_Velocity_Max_PhidgetsUnits_UserSet[ServoChannel] = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_Velocity_Max_PhidgetsUnits_UserSet, ServoChannel " + str(ServoChannel), ServosList_Velocity_Max_PhidgetsUnits_TEMP_ELEMENT, 0.0, 6467.368)
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_Velocity_Max_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Velocity_Max_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_Velocity_Max_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Velocity_Max_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
             self.ServosList_Velocity_Max_PhidgetsUnits_UserSet = [6467.368]*self.NumberOfServos
 
-        print("ServosList_Velocity_Max_PhidgetsUnits_UserSet: " + str(self.ServosList_Velocity_Max_PhidgetsUnits_UserSet))
-        ##########################################
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: ServosList_Velocity_Max_PhidgetsUnits_UserSet: " + str(self.ServosList_Velocity_Max_PhidgetsUnits_UserSet))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         for ServoChannel in range(0, self.NumberOfServos):
             if self.ServosList_Velocity_Max_PhidgetsUnits_UserSet[ServoChannel] <= self.ServosList_Velocity_Min_PhidgetsUnits_UserSet[ServoChannel]:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: Velocity_Max is smaller than or equal to Velocity_Min for ServoChannel " + str(ServoChannel))
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, Velocity_Max is smaller than or equal to Velocity_Min for ServoChannel " + str(ServoChannel))
                 return
-        ##########################################
-        
-        ##########################################
+        #########################################################
+        #########################################################
+
+        #########################################################
+        #########################################################
         if "ServosList_Velocity_Starting_PhidgetsUnits" in setup_dict:
             ServosList_Velocity_Starting_PhidgetsUnits_TEMP = setup_dict["ServosList_Velocity_Starting_PhidgetsUnits"]
 
@@ -588,24 +659,28 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_Velocity_Starting_PhidgetsUnits[ServoChannel] = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_Velocity_Starting_PhidgetsUnits, ServoChannel " + str(ServoChannel), ServosList_Velocity_Starting_PhidgetsUnits_TEMP_ELEMENT, self.ServosList_Velocity_Min_PhidgetsUnits_UserSet[ServoChannel], self.ServosList_Velocity_Max_PhidgetsUnits_UserSet[ServoChannel])
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_Velocity_Starting_PhidgetsUnits must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Velocity_Starting_PhidgetsUnits must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_Velocity_Starting_PhidgetsUnits must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Velocity_Starting_PhidgetsUnits must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
             self.ServosList_Velocity_Starting_PhidgetsUnits = [180.0]*self.NumberOfServos
 
-        print("ServosList_Velocity_Starting_PhidgetsUnits: " + str(self.ServosList_Velocity_Starting_PhidgetsUnits))
-        ##########################################
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: ServosList_Velocity_Starting_PhidgetsUnits: " + str(self.ServosList_Velocity_Starting_PhidgetsUnits))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         self.ServosList_Velocity_ToBeSet = list(self.ServosList_Velocity_Starting_PhidgetsUnits)
-        ##########################################
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "ServosList_PulseWidthMin_PhidgetsUnits_UserSet" in setup_dict:
             ServosList_PulseWidthMin_PhidgetsUnits_UserSet_TEMP = setup_dict["ServosList_PulseWidthMin_PhidgetsUnits_UserSet"]
 
@@ -616,20 +691,22 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_PulseWidthMin_PhidgetsUnits_UserSet[ServoChannel] = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_PulseWidthMin_PhidgetsUnits_UserSet, ServoChannel " + str(ServoChannel), ServosList_PulseWidthMin_PhidgetsUnits_TEMP_ELEMENT, 0.083, 2730.666)
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_PulseWidthMin_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_PulseWidthMin_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_PulseWidthMin_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_PulseWidthMin_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
             self.ServosList_PulseWidthMin_PhidgetsUnits_UserSet = [0.0]*self.NumberOfServos
 
-        print("ServosList_PulseWidthMin_PhidgetsUnits_UserSet: " + str(self.ServosList_PulseWidthMin_PhidgetsUnits_UserSet))
-        ##########################################
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: ServosList_PulseWidthMin_PhidgetsUnits_UserSet: " + str(self.ServosList_PulseWidthMin_PhidgetsUnits_UserSet))
+        #########################################################
+        #########################################################
 
-        ##########################################
+        #########################################################
+        #########################################################
         if "ServosList_PulseWidthMax_PhidgetsUnits_UserSet" in setup_dict:
             ServosList_PulseWidthMax_PhidgetsUnits_UserSet_TEMP = setup_dict["ServosList_PulseWidthMax_PhidgetsUnits_UserSet"]
 
@@ -640,25 +717,29 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_PulseWidthMax_PhidgetsUnits_UserSet[ServoChannel] = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_PulseWidthMax_PhidgetsUnits_UserSet, ServoChannel " + str(ServoChannel), ServosList_PulseWidthMax_PhidgetsUnits_TEMP_ELEMENT, 0.083, 2730.666)
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_PulseWidthMax_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_PulseWidthMax_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__ ERROR: ServosList_PulseWidthMax_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_PulseWidthMax_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
             self.ServosList_PulseWidthMax_PhidgetsUnits_UserSet = [0.0]*self.NumberOfServos
 
-        print("ServosList_PulseWidthMax_PhidgetsUnits_UserSet: " + str(self.ServosList_PulseWidthMax_PhidgetsUnits_UserSet))
-        ##########################################
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: ServosList_PulseWidthMax_PhidgetsUnits_UserSet: " + str(self.ServosList_PulseWidthMax_PhidgetsUnits_UserSet))
+        #########################################################
+        #########################################################
 
+        #########################################################
         #########################################################
         self.PrintToGui_Label_TextInputHistory_List = [" "]*self.NumberOfPrintLines
         self.PrintToGui_Label_TextInput_Str = ""
         self.GUI_ready_to_be_updated_flag = 0
         #########################################################
+        #########################################################
 
+        #########################################################
         #########################################################
         self.CurrentTime_CalculatedFromMainThread = -11111.0
         self.LastTime_CalculatedFromMainThread = -11111.0
@@ -671,8 +752,6 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
         self.DetectedDeviceVersion = "default"
         self.DetectedDeviceSerialNumber = "default"
         #########################################################
-
-        #########################################################
         #########################################################
 
         #########################################################
@@ -681,9 +760,11 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
 
             #########################################################
             for ServoChannel in range(0, self.NumberOfServos):
-                print("Creating ServoChannel: " + str(ServoChannel))
                 self.ServosList_PhidgetsServoObjects.append(RCServo())
-                self.ServosList_PhidgetsServoObjects[ServoChannel].setDeviceSerialNumber(self.DesiredSerialNumber)
+
+                if self.DesiredSerialNumber != -1:
+                    self.ServosList_PhidgetsServoObjects[ServoChannel].setDeviceSerialNumber(self.DesiredSerialNumber)
+
                 self.ServosList_PhidgetsServoObjects[ServoChannel].setChannel(ServoChannel)
                 self.ServosList_PhidgetsServoObjects[ServoChannel].setOnAttachHandler(self.ServosList_ListOfOnAttachCallbackFunctionNames[ServoChannel])
                 self.ServosList_PhidgetsServoObjects[ServoChannel].setOnDetachHandler(self.ServosList_ListOfOnDetachCallbackFunctionNames[ServoChannel])
@@ -760,23 +841,30 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
             #########################################################
 
             #########################################################
-            if self.DetectedDeviceSerialNumber != self.DesiredSerialNumber:
-                print("The desired Serial Number (" + str(self.DesiredSerialNumber) + ") does not match the detected serial number (" + str(self.DetectedDeviceSerialNumber) + ").")
-                input("Press any key (and enter) to exit.")
-                sys.exit()
+            if self.DesiredSerialNumber != -1: #'-1' means we should open the device regardless os serial number.
+                if self.DetectedDeviceSerialNumber != self.DesiredSerialNumber:
+                    print("The desired Serial Number (" + str(self.DesiredSerialNumber) + ") does not match the detected serial number (" + str(self.DetectedDeviceSerialNumber) + ").")
+                    input("Press any key (and enter) to exit.")
+                    sys.exit()
             #########################################################
 
-            ##########################################
+            #########################################################
             self.MainThread_ThreadingObject = threading.Thread(target=self.MainThread, args=())
             self.MainThread_ThreadingObject.start()
-            ##########################################
+            #########################################################
 
-            ##########################################
+            #########################################################
             if self.USE_GUI_FLAG == 1:
                 self.StartGUI(self.root)
-            ##########################################
+            #########################################################
 
+            #########################################################
+            time.sleep(0.25)
+            #########################################################
+
+            #########################################################
             self.OBJECT_CREATED_SUCCESSFULLY_FLAG = 1
+            #########################################################
 
         #########################################################
         #########################################################
@@ -1446,10 +1534,14 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
     ##########################################################################################################
     def GetMostRecentDataDict(self):
 
-        self.MostRecentDataDict = dict([("ServosList_ErrorCallbackFiredFlag", self.ServosList_ErrorCallbackFiredFlag),
-                                             ("Time", self.CurrentTime_CalculatedFromMainThread)])
-
-        return self.MostRecentDataDict
+        if self.EXIT_PROGRAM_FLAG == 0:
+            self.MostRecentDataDict = dict([("ServosList_ErrorCallbackFiredFlag", self.ServosList_ErrorCallbackFiredFlag),
+                                            ("Time", self.CurrentTime_CalculatedFromMainThread)])
+    
+            return deepcopy(self.MostRecentDataDict) #deepcopy IS required as MostRecentDataDict contains lists.
+        
+        else:
+            return dict() #So that we're not returning variables during the close-down process.
     ##########################################################################################################
     ##########################################################################################################
 
@@ -1472,6 +1564,7 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
     ##########################################################################################################
 
     ##########################################################################################################
+    ##########################################################################################################
     ########################################################################################################## unicorn
     def MainThread(self):
 
@@ -1481,19 +1574,17 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
 
         self.StartingTime_CalculatedFromMainThread = self.getPreciseSecondsTimeStampString()
 
-        ###############################################
+        ##########################################################################################################
+        ##########################################################################################################
         while self.EXIT_PROGRAM_FLAG == 0:
 
-            ###############################################
+            ##########################################################################################################
             self.CurrentTime_CalculatedFromMainThread = self.getPreciseSecondsTimeStampString() - self.StartingTime_CalculatedFromMainThread
-            ###############################################
+            ##########################################################################################################
 
-            ###############################################
-            ###############################################
+            ##########################################################################################################
             try:
                 for ServoChannel in range(0, self.NumberOfServos):
-
-
 
                     ############################################### SpeedRampingState
                     if self.ServosList_SpeedRampingState_NeedsToBeChangedFlag[ServoChannel] == 1:
@@ -1527,31 +1618,28 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
 
             except PhidgetException as e:
                 print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class MainThread, Phidget Exception %i: %s" % (e.code, e.details))
-            ###############################################
-            ###############################################
+            ##########################################################################################################
 
-            ############################################### USE THE TIME.SLEEP() TO SET THE LOOP FREQUENCY
-            ###############################################
-            ###############################################
+            ########################################################################################################## USE THE TIME.SLEEP() TO SET THE LOOP FREQUENCY
             self.UpdateFrequencyCalculation_MainThread()
 
             if self.MainThread_TimeToSleepEachLoop > 0.0:
                 time.sleep(self.MainThread_TimeToSleepEachLoop)
+            ##########################################################################################################
 
-            ###############################################
-            ###############################################
-            ###############################################
+        ##########################################################################################################
+        ##########################################################################################################
 
-        ###############################################
-
-        ###############################################
+        ##########################################################################################################
+        ##########################################################################################################
         for ServoChannel in range(0, self.NumberOfServos):
             self.ServosList_PhidgetsServoObjects[ServoChannel].close()
-        ###############################################
+        ##########################################################################################################
+        ##########################################################################################################
 
         self.MyPrint_WithoutLogFile("Finished MainThread for PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class object.")
-        
         self.MainThread_still_running_flag = 0
+    ##########################################################################################################
     ##########################################################################################################
     ##########################################################################################################
 
@@ -1568,34 +1656,23 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
 
     ##########################################################################################################
     ##########################################################################################################
-    def StartGUI(self, GuiParent=None):
+    def StartGUI(self, GuiParent):
 
-        GUI_Thread_ThreadingObject = threading.Thread(target=self.GUI_Thread, args=(GuiParent,))
-        GUI_Thread_ThreadingObject.setDaemon(True) #Should mean that the GUI thread is destroyed automatically when the main thread is destroyed.
-        GUI_Thread_ThreadingObject.start()
+        self.GUI_Thread_ThreadingObject = threading.Thread(target=self.GUI_Thread, args=(GuiParent,))
+        self.GUI_Thread_ThreadingObject.setDaemon(True) #Should mean that the GUI thread is destroyed automatically when the main thread is destroyed.
+        self.GUI_Thread_ThreadingObject.start()
     ##########################################################################################################
     ##########################################################################################################
 
     ##########################################################################################################
     ##########################################################################################################
-    def GUI_Thread(self, parent=None):
+    def GUI_Thread(self, parent):
 
         print("Starting the GUI_Thread for PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class object.")
 
         ###################################################
-        if parent == None:  #This class object owns root and must handle it properly
-            self.root = Tk()
-            self.parent = self.root
-
-            ################################################### SET THE DEFAULT FONT FOR ALL WIDGETS CREATED AFTTER/BELOW THIS CALL
-            default_font = tkFont.nametofont("TkDefaultFont")
-            default_font.configure(size=8)
-            self.root.option_add("*Font", default_font)
-            ###################################################
-
-        else:
-            self.root = parent
-            self.parent = parent
+        self.root = parent
+        self.parent = parent
         ###################################################
 
         ###################################################
@@ -1618,68 +1695,35 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
         self.TKinter_LightRedColor = '#%02x%02x%02x' % (255, 150, 150) #RGB
         self.TKinter_LightYellowColor = '#%02x%02x%02x' % (255, 255, 150)  # RGB
         self.TKinter_DefaultGrayColor = '#%02x%02x%02x' % (240, 240, 240)  # RGB
-        self.TkinterScaleWidth = 10
-        self.TkinterScaleLength = 250
         ###################################################
 
         #################################################
-        self.DeviceInfo_LabelObject = Label(self.myFrame, text="Device Info", width=50)
+        self.DeviceInfo_Label = Label(self.myFrame, text="Device Info", width=125)
 
-        self.DeviceInfo_LabelObject["text"] = self.NameToDisplay_UserSet + \
+        self.DeviceInfo_Label["text"] = self.NameToDisplay_UserSet + \
                                          "\nDevice Name: " + self.DetectedDeviceName + \
                                          "\nDevice Serial Number: " + str(self.DetectedDeviceSerialNumber) + \
                                          "\nDevice Version: " + str(self.DetectedDeviceVersion)
 
-        self.DeviceInfo_LabelObject.grid(row=0, column=0, padx=5, pady=1, columnspan=1, rowspan=1)
+        self.DeviceInfo_Label.grid(row=0, column=0, padx=10, pady=10, columnspan=1, rowspan=1)
         #################################################
 
         #################################################
-        self.Data_LabelObject = Label(self.myFrame, text="Device Info", width=100)
-        self.Data_LabelObject["text"] = "Data_LabelObject"
-        self.Data_LabelObject.grid(row=0, column=1, padx=5, pady=1, columnspan=1, rowspan=1)
-        #################################################
-
-        '''
-        #################################################
-        self.DigitalOutputs_Label = Label(self.myFrame, text="DigitalOutputs_Label", width=70)
-        self.DigitalOutputs_Label.grid(row=0, column=1, padx=5, pady=1, columnspan=1, rowspan=10)
-        #################################################
-        
-        #################################################
-
-        self.DigitalOutputButtonsFrame = Frame(self.myFrame)
-
-        #if self.UseBorderAroundThisGuiObjectFlag == 1:
-        #    self.myFrame["borderwidth"] = 2
-        #    self.myFrame["relief"] = "ridge"
-
-        self.DigitalOutputButtonsFrame.grid(row = 1, column = 0, padx = 1, pady = 1, rowspan = 1, columnspan = 1)
-
-        self.ServosList_ButtonObjects = []
-        for ServoChannel in range(0, self.NumberOfServos):
-            self.ServosList_ButtonObjects.append(Button(self.DigitalOutputButtonsFrame, text="Relay " + str(ServoChannel), state="normal", width=8, command=lambda i=ServoChannel: self.ServosList_ButtonObjectsResponse(i)))
-            self.ServosList_ButtonObjects[ServoChannel].grid(row=1, column=ServoChannel, padx=1, pady=1)
-        #################################################
-        '''
-
-        #################################################
-        #################################################
+        self.Data_Label = Label(self.myFrame, text="Device Info", width=125)
+        self.Data_Label["text"] = "Data_Label"
+        self.Data_Label.grid(row=1, column=0, padx=10, pady=10, columnspan=1, rowspan=1)
         #################################################
 
         ###################################################
         self.ServoControlsFrame = Frame(self.myFrame)
-
-        self.ServoControlsFrame.grid(row = 1,
-                          column = 0,
-                          padx = 1,
-                          pady = 1,
-                          rowspan = 1,
-                          columnspan= 10)
+        self.ServoControlsFrame.grid(row = 2, column = 0, padx = 10, pady = 10, rowspan = 1, columnspan= 1)
         ###################################################
 
+        ###################################################
         self.TkinterScaleWidth = 5
         self.TkinterScaleLength = 200
         self.PosVelAccelGuiLabelWidth = 6
+        ###################################################
 
         ##################################################################################################
         ##################################################################################################
@@ -1698,7 +1742,7 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                                             #tickinterval=(self.ServosList_Position_Max_PhidgetsUnits_UserSet[ServoChannel] - self.ServosList_Position_Min_PhidgetsUnits_UserSet[ServoChannel]) / 2.0,\
                                             orient=HORIZONTAL,\
                                             borderwidth=2,\
-                                            showvalue=1,\
+                                            showvalue=True,\
                                             width=self.TkinterScaleWidth,\
                                             length=self.TkinterScaleLength,\
                                             resolution=1,\
@@ -1724,7 +1768,7 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                                             #tickinterval=(self.ServosList_Velocity_Max_PhidgetsUnits_UserSet[ServoChannel] - self.ServosList_Velocity_Min_PhidgetsUnits_UserSet[ServoChannel]) / 2.0,\
                                             orient=HORIZONTAL,\
                                             borderwidth=2,\
-                                            showvalue=1,\
+                                            showvalue=True,\
                                             width=self.TkinterScaleWidth,\
                                             length=self.TkinterScaleLength,\
                                             resolution=1,\
@@ -1776,28 +1820,15 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
         ##################################################################################################
         ##################################################################################################
 
-        ########################
-        self.PrintToGui_Label = Label(self.myFrame, text="PrintToGui_Label", width=75)
+        ###########################################################
+        self.PrintToGui_Label = Label(self.myFrame, text="PrintToGui_Label", width=125)
         if self.EnableInternal_MyPrint_Flag == 1:
-            self.PrintToGui_Label.grid(row=2, column=0, padx=1, pady=1, columnspan=1, rowspan=10)
-        ########################
+            self.PrintToGui_Label.grid(row=3, column=0, padx=10, pady=10, columnspan=10, rowspan=1)
+        ###########################################################
 
-        ########################
-        if self.RootIsOwnedExternallyFlag == 0: #This class object owns root and must handle it properly
-            self.root.protocol("WM_DELETE_WINDOW", self.ExitProgram_Callback)
-
-            self.root.after(self.GUI_RootAfterCallbackInterval_Milliseconds, self.GUI_update_clock)
-            self.GUI_ready_to_be_updated_flag = 1
-            self.root.mainloop()
-        else:
-            self.GUI_ready_to_be_updated_flag = 1
-        ########################
-
-        ########################
-        if self.RootIsOwnedExternallyFlag == 0: #This class object owns root and must handle it properly
-            self.root.quit()  # Stop the GUI thread, MUST BE CALLED FROM GUI_Thread
-            self.root.destroy()  # Close down the GUI thread, MUST BE CALLED FROM GUI_Thread
-        ########################
+        ###########################################################
+        self.GUI_ready_to_be_updated_flag = 1
+        ###########################################################
 
     ##########################################################################################################
     ##########################################################################################################
@@ -1882,7 +1913,7 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                 try:
 
                     #######################################################
-                    self.Data_LabelObject["text"] = "\nPosition ActualRx: " + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self.ServosList_Position_ActualRxFromBoard, 0, 1) + \
+                    self.Data_Label["text"] = "\nPosition ActualRx: " + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self.ServosList_Position_ActualRxFromBoard, 0, 1) + \
                                                 "\nVelocity ActualRx: " + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self.ServosList_Velocity_ActualRxFromBoard, 0, 6) + \
                                                 "\nTime: " + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self.CurrentTime_CalculatedFromMainThread, 0, 3) + \
                                                 "\nMain Thread Frequency: " + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self.DataStreamingFrequency_CalculatedFromMainThread, 0, 3)
@@ -1958,13 +1989,6 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                 #######################################################
                 #######################################################
 
-                #######################################################
-                #######################################################
-                if self.RootIsOwnedExternallyFlag == 0:  # This class object owns root and must handle it properly
-                    self.root.after(self.GUI_RootAfterCallbackInterval_Milliseconds, self.GUI_update_clock)
-                #######################################################
-                #######################################################
-
             #######################################################
             #######################################################
             #######################################################
@@ -1974,19 +1998,6 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
         #######################################################
         #######################################################
 
-    ##########################################################################################################
-    ##########################################################################################################
-
-    ##########################################################################################################
-    ##########################################################################################################
-    def IsInputList(self, input, print_result_flag = 0):
-
-        result = isinstance(input, list)
-
-        if print_result_flag == 1:
-            self.MyPrint_WithoutLogFile("IsInputList: " + str(result))
-
-        return result
     ##########################################################################################################
     ##########################################################################################################
 
@@ -2002,47 +2013,6 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
             return 0
 
         return 1  # If InputToCheck was a list and no element failed to be a float or int, then return a success/1
-    ##########################################################################################################
-    ##########################################################################################################
-
-    ##########################################################################################################
-    ##########################################################################################################
-    def ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self, input, number_of_leading_numbers=4, number_of_decimal_places=3):
-        IsListFlag = self.IsInputList(input)
-
-        if IsListFlag == 0:
-            float_number_list = [input]
-        else:
-            float_number_list = list(input)
-
-        float_number_list_as_strings = []
-        for element in float_number_list:
-            try:
-                element = float(element)
-                prefix_string = "{:." + str(number_of_decimal_places) + "f}"
-                element_as_string = prefix_string.format(element)
-                float_number_list_as_strings.append(element_as_string)
-            except:
-                self.MyPrint_WithoutLogFile(self.TellWhichFileWereIn() + ": ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput ERROR: " + str(element) + " cannot be turned into a float")
-                return -1
-
-        StringToReturn = ""
-        if IsListFlag == 0:
-            StringToReturn = float_number_list_as_strings[0].zfill(number_of_leading_numbers + number_of_decimal_places + 1 + 1)  # +1 for sign, +1 for decimal place
-        else:
-            StringToReturn = "["
-            for index, StringElement in enumerate(float_number_list_as_strings):
-                if float_number_list[index] >= 0:
-                    StringElement = "+" + StringElement  # So that our strings always have either + or - signs to maintain the same string length
-
-                StringElement = StringElement.zfill(number_of_leading_numbers + number_of_decimal_places + 1 + 1)  # +1 for sign, +1 for decimal place
-
-                if index != len(float_number_list_as_strings) - 1:
-                    StringToReturn = StringToReturn + StringElement + ", "
-                else:
-                    StringToReturn = StringToReturn + StringElement + "]"
-
-        return StringToReturn
     ##########################################################################################################
     ##########################################################################################################
 
@@ -2093,5 +2063,176 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                     self.PrintToGui_Label_TextInput_Str = self.PrintToGui_Label_TextInput_Str + "\n"
             ################################
 
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def IsInputList(self, InputToCheck):
+
+        result = isinstance(InputToCheck, list)
+        return result
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    ##########################################################################################################
+    ##########################################################################################################
+    def ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(self, input, number_of_leading_numbers = 4, number_of_decimal_places = 3):
+
+        number_of_decimal_places = max(1, number_of_decimal_places) #Make sure we're above 1
+
+        ListOfStringsToJoin = []
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+        if isinstance(input, str) == 1:
+            ListOfStringsToJoin.append(input)
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+        elif isinstance(input, int) == 1 or isinstance(input, float) == 1:
+            element = float(input)
+            prefix_string = "{:." + str(number_of_decimal_places) + "f}"
+            element_as_string = prefix_string.format(element)
+
+            ##########################################################################################################
+            ##########################################################################################################
+            if element >= 0:
+                element_as_string = element_as_string.zfill(number_of_leading_numbers + number_of_decimal_places + 1 + 1)  # +1 for sign, +1 for decimal place
+                element_as_string = "+" + element_as_string  # So that our strings always have either + or - signs to maintain the same string length
+            else:
+                element_as_string = element_as_string.zfill(number_of_leading_numbers + number_of_decimal_places + 1 + 1 + 1)  # +1 for sign, +1 for decimal place
+            ##########################################################################################################
+            ##########################################################################################################
+
+            ListOfStringsToJoin.append(element_as_string)
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+        elif isinstance(input, list) == 1:
+
+            if len(input) > 0:
+                for element in input: #RECURSION
+                    ListOfStringsToJoin.append(self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(element, number_of_leading_numbers, number_of_decimal_places))
+
+            else: #Situation when we get a list() or []
+                ListOfStringsToJoin.append(str(input))
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+        elif isinstance(input, tuple) == 1:
+
+            if len(input) > 0:
+                for element in input: #RECURSION
+                    ListOfStringsToJoin.append("TUPLE" + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(element, number_of_leading_numbers, number_of_decimal_places))
+
+            else: #Situation when we get a list() or []
+                ListOfStringsToJoin.append(str(input))
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+        elif isinstance(input, dict) == 1:
+
+            if len(input) > 0:
+                for Key in input: #RECURSION
+                    ListOfStringsToJoin.append(str(Key) + ": " + self.ConvertFloatToStringWithNumberOfLeadingNumbersAndDecimalPlaces_NumberOrListInput(input[Key], number_of_leading_numbers, number_of_decimal_places))
+
+            else: #Situation when we get a dict()
+                ListOfStringsToJoin.append(str(input))
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+        else:
+            ListOfStringsToJoin.append(str(input))
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+        if len(ListOfStringsToJoin) > 1:
+
+            ##########################################################################################################
+            ##########################################################################################################
+
+            ##########################################################################################################
+            StringToReturn = ""
+            for Index, StringToProcess in enumerate(ListOfStringsToJoin):
+
+                ################################################
+                if Index == 0: #The first element
+                    if StringToProcess.find(":") != -1 and StringToProcess[0] != "{": #meaning that we're processing a dict()
+                        StringToReturn = "{"
+                    elif StringToProcess.find("TUPLE") != -1 and StringToProcess[0] != "(":  # meaning that we're processing a tuple
+                        StringToReturn = "("
+                    else:
+                        StringToReturn = "["
+
+                    StringToReturn = StringToReturn + StringToProcess.replace("TUPLE","") + ", "
+                ################################################
+
+                ################################################
+                elif Index < len(ListOfStringsToJoin) - 1: #The middle elements
+                    StringToReturn = StringToReturn + StringToProcess + ", "
+                ################################################
+
+                ################################################
+                else: #The last element
+                    StringToReturn = StringToReturn + StringToProcess
+
+                    if StringToProcess.find(":") != -1 and StringToProcess[-1] != "}":  # meaning that we're processing a dict()
+                        StringToReturn = StringToReturn + "}"
+                    elif StringToProcess.find("TUPLE") != -1 and StringToProcess[-1] != ")":  # meaning that we're processing a tuple
+                        StringToReturn = StringToReturn + ")"
+                    else:
+                        StringToReturn = StringToReturn + "]"
+
+                ################################################
+
+            ##########################################################################################################
+
+            ##########################################################################################################
+            ##########################################################################################################
+
+        elif len(ListOfStringsToJoin) == 1:
+            StringToReturn = ListOfStringsToJoin[0]
+
+        else:
+            StringToReturn = ListOfStringsToJoin
+
+        return StringToReturn
+        ##########################################################################################################
+        ##########################################################################################################
+        ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
     ##########################################################################################################
     ##########################################################################################################

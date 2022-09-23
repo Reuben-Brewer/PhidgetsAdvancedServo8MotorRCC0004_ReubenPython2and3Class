@@ -1,4 +1,4 @@
-########################
+###########################
 
 PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class
 
@@ -26,19 +26,25 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision F, 03/13/2022
+Software Revision I, 09/21/2022
 
 Verified working on: 
 Python 2.7, 3.8.
 Windows 8.1, 10 64-bit
+Ubuntu 20.04
 Raspberry Pi Buster 
 (no Mac testing yet)
 
 *NOTE THAT YOU MUST INSTALL BOTH THE Phidget22 LIBRARY AS WELL AS THE PYTHON MODULE.*
 
-########################  
+###########################
 
 ########################### Python module installation instructions, all OS's
+
+PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class, ListOfModuleDependencies: ['future.builtins', 'Phidget22']
+PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class, ListOfModuleDependencies_TestProgram: ['MyPrint_ReubenPython2and3Class']
+PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class, ListOfModuleDependencies_NestedLayers: ['future.builtins']
+PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class, ListOfModuleDependencies_All: ['future.builtins', 'MyPrint_ReubenPython2and3Class', 'Phidget22']
 
 https://pypi.org/project/Phidget22/#files
 

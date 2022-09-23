@@ -6,22 +6,29 @@ reuben.brewer@gmail.com,
 www.reubotics.com
 
 Apache 2 License
-Software Revision F, 03/13/2022
+Software Revision I, 09/21/2022
 
-Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit and Raspberry Pi Buster (no Mac testing yet).
+Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit, Ubuntu 20.04, and Raspberry Pi Buster (no Mac testing yet).
 '''
 
 __author__ = 'reuben.brewer'
 
+###########################################################
 from PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class import *
 from MyPrint_ReubenPython2and3Class import *
+###########################################################
 
-import os, sys, platform
-import time, datetime
+###########################################################
+import os
+import sys
+import platform
+import time
+import datetime
 import threading
 import collections
+###########################################################
 
-###############
+###########################################################
 if sys.version_info[0] < 3:
     from Tkinter import * #Python 2
     import tkFont
@@ -30,22 +37,15 @@ else:
     from tkinter import * #Python 3
     import tkinter.font as tkFont #Python 3
     from tkinter import ttk
-###############
+###########################################################
 
-###############
-if sys.version_info[0] < 3:
-    from builtins import raw_input as input
-else:
-    from future.builtins import input as input #"sudo pip3 install future" (Python 3) AND "sudo pip install future" (Python 2)
-###############
-
-###############
+###########################################################
 import platform
 if platform.system() == "Windows":
     import ctypes
     winmm = ctypes.WinDLL('winmm')
     winmm.timeBeginPeriod(1) #Set minimum timer resolution to 1ms so that time.sleep(0.001) behaves properly.
-###############
+###########################################################
 
 ###########################################################################################################
 ##########################################################################################################
@@ -122,7 +122,12 @@ def ExitProgram_Callback():
 ##########################################################################################################
 def GUI_Thread():
     global root
+    global root_Xpos
+    global root_Ypos
+    global root_width
+    global root_height
     global GUI_RootAfterCallbackInterval_Milliseconds
+    global USE_TABS_IN_GUI_FLAG
 
     ################################################# KEY GUI LINE
     #################################################
@@ -131,17 +136,56 @@ def GUI_Thread():
     #################################################
 
     #################################################
-    TestButton = Button(root, text='Test Button', state="normal", width=20, command=lambda i=1: TestButtonResponse())
-    TestButton.grid(row=0, column=0, padx=5, pady=1)
+    #################################################
+    global TabControlObject
+    global Tab_MainControls
+    global Tab_SERVOS
+    global Tab_MyPrint
+
+    if USE_TABS_IN_GUI_FLAG == 1:
+        #################################################
+        TabControlObject = ttk.Notebook(root)
+
+        Tab_SERVOS = ttk.Frame(TabControlObject)
+        TabControlObject.add(Tab_SERVOS, text='   SERVOS   ')
+
+        Tab_MainControls = ttk.Frame(TabControlObject)
+        TabControlObject.add(Tab_MainControls, text='   Main Controls   ')
+
+        Tab_MyPrint = ttk.Frame(TabControlObject)
+        TabControlObject.add(Tab_MyPrint, text='   MyPrint Terminal   ')
+
+        TabControlObject.pack(expand=1, fill="both")  # CANNOT MIX PACK AND GRID IN THE SAME FRAME/TAB, SO ALL .GRID'S MUST BE CONTAINED WITHIN THEIR OWN FRAME/TAB.
+
+        ############# #Set the tab header font
+        TabStyle = ttk.Style()
+        TabStyle.configure('TNotebook.Tab', font=('Helvetica', '12', 'bold'))
+        #############
+        #################################################
+    else:
+        #################################################
+        Tab_MainControls = root
+        Tab_SERVOS = root
+        Tab_MyPrint = root
+        #################################################
+
+    #################################################
     #################################################
 
     #################################################
+    TestButton = Button(Tab_MainControls, text='Test Button', state="normal", width=20, command=lambda i=1: TestButtonResponse())
+    TestButton.grid(row=0, column=0, padx=5, pady=1)
+    #################################################
+
+    ################################################# THIS BLOCK MUST COME 2ND-TO-LAST IN def GUI_Thread() IF USING TABS.
     root.protocol("WM_DELETE_WINDOW", ExitProgram_Callback)  # Set the callback function for when the window's closed.
+    root.title("test_program_for_PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class")
+    root.geometry('%dx%d+%d+%d' % (root_width, root_height, root_Xpos, root_Ypos)) # set the dimensions of the screen and where it is placed
     root.after(GUI_RootAfterCallbackInterval_Milliseconds, GUI_update_clock)
     root.mainloop()
     #################################################
 
-    #################################################
+    #################################################  THIS BLOCK MUST COME LAST IN def GUI_Thread() REGARDLESS OF CODE.
     root.quit() #Stop the GUI thread, MUST BE CALLED FROM GUI_Thread
     root.destroy() #Close down the GUI thread, MUST BE CALLED FROM GUI_Thread
     #################################################
@@ -182,6 +226,9 @@ if __name__ == '__main__':
     global USE_GUI_FLAG
     USE_GUI_FLAG = 1
 
+    global USE_TABS_IN_GUI_FLAG
+    USE_TABS_IN_GUI_FLAG = 1
+    
     global USE_SERVOS_FLAG
     USE_SERVOS_FLAG = 1
 
@@ -218,7 +265,7 @@ if __name__ == '__main__':
 
     GUI_COLUMN_SERVOS = 0
     GUI_PADX_SERVOS = 1
-    GUI_PADY_SERVOS = 10
+    GUI_PADY_SERVOS = 1
     GUI_ROWSPAN_SERVOS = 1
     GUI_COLUMNSPAN_SERVOS = 1
 
@@ -232,7 +279,7 @@ if __name__ == '__main__':
 
     GUI_COLUMN_MYPRINT = 0
     GUI_PADX_MYPRINT = 1
-    GUI_PADY_MYPRINT = 10
+    GUI_PADY_MYPRINT = 1
     GUI_ROWSPAN_MYPRINT = 1
     GUI_COLUMNSPAN_MYPRINT = 1
     #################################################
@@ -249,6 +296,28 @@ if __name__ == '__main__':
     global StartingTime_MainLoopThread
     StartingTime_MainLoopThread = -11111.0
 
+    global root
+
+    global root_Xpos
+    root_Xpos = 900
+
+    global root_Ypos
+    root_Ypos = 0
+
+    global root_width
+    root_width = 1920 - root_Xpos
+
+    global root_height
+    root_height = 1020 - root_Ypos
+
+    global TabControlObject
+    global Tab_MainControls
+    global Tab_SERVOS
+    global Tab_MyPrint
+
+    global GUI_RootAfterCallbackInterval_Milliseconds
+    GUI_RootAfterCallbackInterval_Milliseconds = 30
+
     global SINUSOIDAL_MOTION_INPUT_ROMtestTimeToPeakAngle
     SINUSOIDAL_MOTION_INPUT_ROMtestTimeToPeakAngle = 2.0
 
@@ -263,11 +332,6 @@ if __name__ == '__main__':
 
     global SINUSOIDAL_MOTION_INPUT_MaxValue_VelocityControl
     SINUSOIDAL_MOTION_INPUT_MaxValue_VelocityControl = 1.0
-
-    global root
-
-    global GUI_RootAfterCallbackInterval_Milliseconds
-    GUI_RootAfterCallbackInterval_Milliseconds = 30
     #################################################
     #################################################
 
@@ -282,9 +346,10 @@ if __name__ == '__main__':
     NumberOfServos = 8
 
     global ServosList_TestChannelsList
-    ServosList_TestChannelsList = []#[0, 2]
+    ServosList_TestChannelsList = [0, 2]
 
     global SERVOS_MostRecentDict
+    SERVOS_MostRecentDict = dict()
 
     global SERVOS_MostRecentDict_ServosList_ErrorCallbackFiredFlag
     SERVOS_MostRecentDict_ServosList_ErrorCallbackFiredFlag = [-1] * NumberOfServos
@@ -313,6 +378,9 @@ if __name__ == '__main__':
         time.sleep(0.5)  #Allow enough time for 'root' to be created that we can then pass it into other classes.
     else:
         root = None
+        Tab_MainControls = None
+        Tab_SERVOS = None
+        Tab_MyPrint = None
     #################################################
     #################################################
 
@@ -320,7 +388,7 @@ if __name__ == '__main__':
     #################################################
     global PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject_GUIparametersDict
     PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_SERVOS_FLAG),
-                                    ("root", root),
+                                    ("root", Tab_SERVOS),
                                     ("EnableInternal_MyPrint_Flag", 1),
                                     ("NumberOfPrintLines", 10),
                                     ("UseBorderAroundThisGuiObjectFlag", 0),
@@ -333,7 +401,7 @@ if __name__ == '__main__':
 
     global PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject_setup_dict
     PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject_setup_dict = dict([("GUIparametersDict", PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject_GUIparametersDict),
-                                                                                ("DesiredSerialNumber", 594289), #CHANGE THIS FOR YOUR UNIQUE SERIAL NUMBER
+                                                                                ("DesiredSerialNumber", -1), #-1 MEANS ANY SN, CHANGE THIS FOR YOUR UNIQUE SERIAL NUMBER
                                                                                 ("WaitForAttached_TimeoutDuration_Milliseconds", 5000),
                                                                                 ("NameToDisplay_UserSet", "Reuben's Test Advanced Servo 8-Motor RCC0004_0 Controller"),
                                                                                 ("UsePhidgetsLoggingInternalToThisClassObjectFlag", 1),
@@ -353,7 +421,6 @@ if __name__ == '__main__':
     if USE_SERVOS_FLAG == 1:
         try:
             PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject = PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject_setup_dict)
-            time.sleep(0.25)
             SERVOS_OPEN_FLAG = PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
 
         except:
@@ -368,7 +435,7 @@ if __name__ == '__main__':
     if USE_MYPRINT_FLAG == 1:
 
         MyPrint_ReubenPython2and3ClassObject_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_MYPRINT_FLAG),
-                                                                        ("root", root),
+                                                                        ("root", Tab_MyPrint),
                                                                         ("UseBorderAroundThisGuiObjectFlag", 0),
                                                                         ("GUI_ROW", GUI_ROW_MYPRINT),
                                                                         ("GUI_COLUMN", GUI_COLUMN_MYPRINT),
@@ -385,7 +452,6 @@ if __name__ == '__main__':
 
         try:
             MyPrint_ReubenPython2and3ClassObject = MyPrint_ReubenPython2and3Class(MyPrint_ReubenPython2and3ClassObject_setup_dict)
-            time.sleep(0.25)
             MYPRINT_OPEN_FLAG = MyPrint_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
 
         except:
@@ -399,8 +465,7 @@ if __name__ == '__main__':
     #################################################
     if USE_SERVOS_FLAG == 1 and SERVOS_OPEN_FLAG != 1:
         print("Failed to open PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class.")
-        input("Press any key (and enter) to exit.")
-        sys.exit()
+        ExitProgram_Callback()
     #################################################
     #################################################
 
@@ -408,8 +473,7 @@ if __name__ == '__main__':
     #################################################
     if USE_MYPRINT_FLAG == 1 and MYPRINT_OPEN_FLAG != 1:
         print("Failed to open MyPrint_ReubenPython2and3ClassObject.")
-        input("Press any key (and enter) to exit.")
-        sys.exit()
+        ExitProgram_Callback()
     #################################################
     #################################################
 
