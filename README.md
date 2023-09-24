@@ -29,7 +29,7 @@ www.reubotics.com
 
 Apache 2 License
 
-Software Revision J, 09/24/2023
+Software Revision I, 09/21/2022
 
 Verified working on: 
 
@@ -61,7 +61,7 @@ https://pypi.org/project/Phidget22/#files
 
 To install the Python module using pip:
 
-pip install Phidget22       (with "sudo" if on Linux/Raspberry Pi)
+pip install Phidget22 (with "sudo" if on Linux/Raspberry Pi)
 
 To install the Python module from the downloaded .tar.gz file, enter downloaded folder and type "python setup.py install"
 
