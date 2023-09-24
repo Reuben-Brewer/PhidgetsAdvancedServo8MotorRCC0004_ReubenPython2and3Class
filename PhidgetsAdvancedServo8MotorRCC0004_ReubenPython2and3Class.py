@@ -2171,9 +2171,11 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
     ##########################################################################################################
     def StartGUI(self, GuiParent):
 
-        self.GUI_Thread_ThreadingObject = threading.Thread(target=self.GUI_Thread, args=(GuiParent,))
-        self.GUI_Thread_ThreadingObject.setDaemon(True) #Should mean that the GUI thread is destroyed automatically when the main thread is destroyed.
-        self.GUI_Thread_ThreadingObject.start()
+        #self.GUI_Thread_ThreadingObject = threading.Thread(target=self.GUI_Thread, args=(GuiParent,))
+        #self.GUI_Thread_ThreadingObject.setDaemon(True) #Should mean that the GUI thread is destroyed automatically when the main thread is destroyed.
+        #self.GUI_Thread_ThreadingObject.start()
+
+        self.GUI_Thread(GuiParent)
     ##########################################################################################################
     ##########################################################################################################
 
