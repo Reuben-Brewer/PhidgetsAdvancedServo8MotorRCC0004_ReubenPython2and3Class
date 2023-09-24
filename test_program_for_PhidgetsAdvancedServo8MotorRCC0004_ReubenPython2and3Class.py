@@ -6,7 +6,7 @@ reuben.brewer@gmail.com,
 www.reubotics.com
 
 Apache 2 License
-Software Revision I, 09/21/2022
+Software Revision J, 09/24/2023
 
 Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit, Ubuntu 20.04, and Raspberry Pi Buster (no Mac testing yet).
 '''
@@ -60,9 +60,9 @@ def getPreciseSecondsTimeStampString():
 ##########################################################################################################
 def TestButtonResponse():
     global MyPrint_ReubenPython2and3ClassObject
-    global USE_MYPRINT_FLAG
+    global USE_MyPrint_FLAG
 
-    if USE_MYPRINT_FLAG == 1:
+    if USE_MyPrint_FLAG == 1:
         MyPrint_ReubenPython2and3ClassObject.my_print("Test Button was Pressed!")
     else:
         print("Test Button was Pressed!")
@@ -78,12 +78,12 @@ def GUI_update_clock():
     global USE_GUI_FLAG
 
     global PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject
-    global SERVOS_OPEN_FLAG
-    global SHOW_IN_GUI_SERVOS_FLAG
+    global PhidgetsAdvancedServo8MotorRCC0004_OPEN_FLAG
+    global SHOW_IN_GUI_PhidgetsAdvancedServo8MotorRCC0004_FLAG
 
     global MyPrint_ReubenPython2and3ClassObject
-    global MYPRINT_OPEN_FLAG
-    global SHOW_IN_GUI_MYPRINT_FLAG
+    global MyPrint_OPEN_FLAG
+    global SHOW_IN_GUI_MyPrint_FLAG
 
     if USE_GUI_FLAG == 1:
         if EXIT_PROGRAM_FLAG == 0:
@@ -91,12 +91,12 @@ def GUI_update_clock():
         #########################################################
 
             #########################################################
-            if SERVOS_OPEN_FLAG == 1 and SHOW_IN_GUI_SERVOS_FLAG == 1:
+            if PhidgetsAdvancedServo8MotorRCC0004_OPEN_FLAG == 1 and SHOW_IN_GUI_PhidgetsAdvancedServo8MotorRCC0004_FLAG == 1:
                 PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject.GUI_update_clock()
             #########################################################
 
             #########################################################
-            if MYPRINT_OPEN_FLAG == 1 and SHOW_IN_GUI_MYPRINT_FLAG == 1:
+            if MyPrint_OPEN_FLAG == 1 and SHOW_IN_GUI_MyPrint_FLAG == 1:
                 MyPrint_ReubenPython2and3ClassObject.GUI_update_clock()
             #########################################################
 
@@ -139,15 +139,15 @@ def GUI_Thread():
     #################################################
     global TabControlObject
     global Tab_MainControls
-    global Tab_SERVOS
+    global Tab_PhidgetsAdvancedServo8MotorRCC0004
     global Tab_MyPrint
 
     if USE_TABS_IN_GUI_FLAG == 1:
         #################################################
         TabControlObject = ttk.Notebook(root)
 
-        Tab_SERVOS = ttk.Frame(TabControlObject)
-        TabControlObject.add(Tab_SERVOS, text='   SERVOS   ')
+        Tab_PhidgetsAdvancedServo8MotorRCC0004 = ttk.Frame(TabControlObject)
+        TabControlObject.add(Tab_PhidgetsAdvancedServo8MotorRCC0004, text='   SERVOS   ')
 
         Tab_MainControls = ttk.Frame(TabControlObject)
         TabControlObject.add(Tab_MainControls, text='   Main Controls   ')
@@ -165,7 +165,7 @@ def GUI_Thread():
     else:
         #################################################
         Tab_MainControls = root
-        Tab_SERVOS = root
+        Tab_PhidgetsAdvancedServo8MotorRCC0004 = root
         Tab_MyPrint = root
         #################################################
 
@@ -229,59 +229,59 @@ if __name__ == '__main__':
     global USE_TABS_IN_GUI_FLAG
     USE_TABS_IN_GUI_FLAG = 1
     
-    global USE_SERVOS_FLAG
-    USE_SERVOS_FLAG = 1
+    global USE_PhidgetsAdvancedServo8MotorRCC0004_FLAG
+    USE_PhidgetsAdvancedServo8MotorRCC0004_FLAG = 1
 
-    global USE_MYPRINT_FLAG
-    USE_MYPRINT_FLAG = 1
+    global USE_MyPrint_FLAG
+    USE_MyPrint_FLAG = 1
 
-    global USE_SERVOS_POSITION_CONTROL_FLAG
-    USE_SERVOS_POSITION_CONTROL_FLAG = 1 #SET TO 0 FOR VELOCITY CONTROL
+    global USE_PhidgetsAdvancedServo8MotorRCC0004_POSITION_CONTROL_FLAG
+    USE_PhidgetsAdvancedServo8MotorRCC0004_POSITION_CONTROL_FLAG = 1 #SET TO 0 FOR VELOCITY CONTROL
 
-    global USE_SERVOS_SINUSOIDAL_INPUT_FLAG
-    USE_SERVOS_SINUSOIDAL_INPUT_FLAG = 1
+    global USE_PhidgetsAdvancedServo8MotorRCC0004_SINUSOIDAL_INPUT_FLAG
+    USE_PhidgetsAdvancedServo8MotorRCC0004_SINUSOIDAL_INPUT_FLAG = 0
     #################################################
     #################################################
 
     #################################################
     #################################################
-    global SHOW_IN_GUI_SERVOS_FLAG
-    SHOW_IN_GUI_SERVOS_FLAG = 1
+    global SHOW_IN_GUI_PhidgetsAdvancedServo8MotorRCC0004_FLAG
+    SHOW_IN_GUI_PhidgetsAdvancedServo8MotorRCC0004_FLAG = 1
 
-    global SHOW_IN_GUI_MYPRINT_FLAG
-    SHOW_IN_GUI_MYPRINT_FLAG = 1
+    global SHOW_IN_GUI_MyPrint_FLAG
+    SHOW_IN_GUI_MyPrint_FLAG = 1
     #################################################
     #################################################
 
     #################################################
     #################################################
-    global GUI_ROW_SERVOS
-    global GUI_COLUMN_SERVOS
-    global GUI_PADX_SERVOS
-    global GUI_PADY_SERVOS
-    global GUI_ROWSPAN_SERVOS
-    global GUI_COLUMNSPAN_SERVOS
-    GUI_ROW_SERVOS = 1
+    global GUI_ROW_PhidgetsAdvancedServo8MotorRCC0004
+    global GUI_COLUMN_PhidgetsAdvancedServo8MotorRCC0004
+    global GUI_PADX_PhidgetsAdvancedServo8MotorRCC0004
+    global GUI_PADY_PhidgetsAdvancedServo8MotorRCC0004
+    global GUI_ROWSPAN_PhidgetsAdvancedServo8MotorRCC0004
+    global GUI_COLUMNSPAN_PhidgetsAdvancedServo8MotorRCC0004
+    GUI_ROW_PhidgetsAdvancedServo8MotorRCC0004 = 1
 
-    GUI_COLUMN_SERVOS = 0
-    GUI_PADX_SERVOS = 1
-    GUI_PADY_SERVOS = 1
-    GUI_ROWSPAN_SERVOS = 1
-    GUI_COLUMNSPAN_SERVOS = 1
+    GUI_COLUMN_PhidgetsAdvancedServo8MotorRCC0004 = 0
+    GUI_PADX_PhidgetsAdvancedServo8MotorRCC0004 = 1
+    GUI_PADY_PhidgetsAdvancedServo8MotorRCC0004 = 1
+    GUI_ROWSPAN_PhidgetsAdvancedServo8MotorRCC0004 = 1
+    GUI_COLUMNSPAN_PhidgetsAdvancedServo8MotorRCC0004 = 1
 
-    global GUI_ROW_MYPRINT
-    global GUI_COLUMN_MYPRINT
-    global GUI_PADX_MYPRINT
-    global GUI_PADY_MYPRINT
-    global GUI_ROWSPAN_MYPRINT
-    global GUI_COLUMNSPAN_MYPRINT
-    GUI_ROW_MYPRINT = 2
+    global GUI_ROW_MyPrint
+    global GUI_COLUMN_MyPrint
+    global GUI_PADX_MyPrint
+    global GUI_PADY_MyPrint
+    global GUI_ROWSPAN_MyPrint
+    global GUI_COLUMNSPAN_MyPrint
+    GUI_ROW_MyPrint = 2
 
-    GUI_COLUMN_MYPRINT = 0
-    GUI_PADX_MYPRINT = 1
-    GUI_PADY_MYPRINT = 1
-    GUI_ROWSPAN_MYPRINT = 1
-    GUI_COLUMNSPAN_MYPRINT = 1
+    GUI_COLUMN_MyPrint = 0
+    GUI_PADX_MyPrint = 1
+    GUI_PADY_MyPrint = 1
+    GUI_ROWSPAN_MyPrint = 1
+    GUI_COLUMNSPAN_MyPrint = 1
     #################################################
     #################################################
 
@@ -312,7 +312,7 @@ if __name__ == '__main__':
 
     global TabControlObject
     global Tab_MainControls
-    global Tab_SERVOS
+    global Tab_PhidgetsAdvancedServo8MotorRCC0004
     global Tab_MyPrint
 
     global GUI_RootAfterCallbackInterval_Milliseconds
@@ -339,23 +339,26 @@ if __name__ == '__main__':
     #################################################
     global PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject
 
-    global SERVOS_OPEN_FLAG
-    SERVOS_OPEN_FLAG = -1
+    global PhidgetsAdvancedServo8MotorRCC0004_OPEN_FLAG
+    PhidgetsAdvancedServo8MotorRCC0004_OPEN_FLAG = -1
 
     global NumberOfServos
-    NumberOfServos = 8
+    NumberOfServos = 16
+
+    global DesiredBoardEnglishName
+    DesiredBoardEnglishName = "RCC1000"# "RCC0004", "RCC1000" currently supported
 
     global ServosList_TestChannelsList
     ServosList_TestChannelsList = [0, 2]
 
-    global SERVOS_MostRecentDict
-    SERVOS_MostRecentDict = dict()
+    global PhidgetsAdvancedServo8MotorRCC0004_MostRecentDict
+    PhidgetsAdvancedServo8MotorRCC0004_MostRecentDict = dict()
 
-    global SERVOS_MostRecentDict_ServosList_ErrorCallbackFiredFlag
-    SERVOS_MostRecentDict_ServosList_ErrorCallbackFiredFlag = [-1] * NumberOfServos
+    global PhidgetsAdvancedServo8MotorRCC0004_MostRecentDict_PhidgetsAdvancedServo8MotorRCC0004List_ErrorCallbackFiredFlag
+    PhidgetsAdvancedServo8MotorRCC0004_MostRecentDict_PhidgetsAdvancedServo8MotorRCC0004List_ErrorCallbackFiredFlag = [-1] * NumberOfServos
 
-    global SERVOS_MostRecentDict_Time
-    SERVOS_MostRecentDict_Time = -11111.0
+    global PhidgetsAdvancedServo8MotorRCC0004_MostRecentDict_Time
+    PhidgetsAdvancedServo8MotorRCC0004_MostRecentDict_Time = -11111.0
     #################################################
     #################################################
 
@@ -363,8 +366,8 @@ if __name__ == '__main__':
     #################################################
     global MyPrint_ReubenPython2and3ClassObject
 
-    global MYPRINT_OPEN_FLAG
-    MYPRINT_OPEN_FLAG = -1
+    global MyPrint_OPEN_FLAG
+    MyPrint_OPEN_FLAG = -1
     #################################################
     #################################################
 
@@ -379,7 +382,7 @@ if __name__ == '__main__':
     else:
         root = None
         Tab_MainControls = None
-        Tab_SERVOS = None
+        Tab_PhidgetsAdvancedServo8MotorRCC0004 = None
         Tab_MyPrint = None
     #################################################
     #################################################
@@ -387,41 +390,43 @@ if __name__ == '__main__':
     #################################################
     #################################################
     global PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject_GUIparametersDict
-    PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_SERVOS_FLAG),
-                                    ("root", Tab_SERVOS),
+    PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_PhidgetsAdvancedServo8MotorRCC0004_FLAG),
+                                    ("root", Tab_PhidgetsAdvancedServo8MotorRCC0004),
                                     ("EnableInternal_MyPrint_Flag", 1),
                                     ("NumberOfPrintLines", 10),
                                     ("UseBorderAroundThisGuiObjectFlag", 0),
-                                    ("GUI_ROW", GUI_ROW_SERVOS),
-                                    ("GUI_COLUMN", GUI_COLUMN_SERVOS),
-                                    ("GUI_PADX", GUI_PADX_SERVOS),
-                                    ("GUI_PADY", GUI_PADY_SERVOS),
-                                    ("GUI_ROWSPAN", GUI_ROWSPAN_SERVOS),
-                                    ("GUI_COLUMNSPAN", GUI_COLUMNSPAN_SERVOS)])
+                                    ("GUI_ROW", GUI_ROW_PhidgetsAdvancedServo8MotorRCC0004),
+                                    ("GUI_COLUMN", GUI_COLUMN_PhidgetsAdvancedServo8MotorRCC0004),
+                                    ("GUI_PADX", GUI_PADX_PhidgetsAdvancedServo8MotorRCC0004),
+                                    ("GUI_PADY", GUI_PADY_PhidgetsAdvancedServo8MotorRCC0004),
+                                    ("GUI_ROWSPAN", GUI_ROWSPAN_PhidgetsAdvancedServo8MotorRCC0004),
+                                    ("GUI_COLUMNSPAN", GUI_COLUMNSPAN_PhidgetsAdvancedServo8MotorRCC0004)])
 
     global PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject_setup_dict
     PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject_setup_dict = dict([("GUIparametersDict", PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject_GUIparametersDict),
+                                                                                ("DesiredBoardEnglishName", DesiredBoardEnglishName), #"RCC0004", "RCC1000" currently supported
                                                                                 ("DesiredSerialNumber", -1), #-1 MEANS ANY SN, CHANGE THIS FOR YOUR UNIQUE SERIAL NUMBER
                                                                                 ("WaitForAttached_TimeoutDuration_Milliseconds", 5000),
                                                                                 ("NameToDisplay_UserSet", "Reuben's Test Advanced Servo 8-Motor RCC0004_0 Controller"),
                                                                                 ("UsePhidgetsLoggingInternalToThisClassObjectFlag", 1),
                                                                                 ("MainThread_TimeToSleepEachLoop", 0.002),
-                                                                                ("ServosList_DataIntervalMilliseconds", [32.0, 32.0, 32.0, 32.0, 32.0, 32.0, 32.0, 32.0]),
-                                                                                ("ServosList_EngagedState_Starting", [0, 0.0, 0, 0, 0, 0, 0, 1]),
-                                                                                ("ServosList_SpeedRampingState_Starting", [0, 0, 0, 0, 0, 0, 1, 0]),
-                                                                                ("ServosList_Position_Min_PhidgetsUnits_UserSet", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
-                                                                                ("ServosList_Position_Max_PhidgetsUnits_UserSet", [2826.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0]),
-                                                                                ("ServosList_Position_Starting_PhidgetsUnits", [90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0]),                                                                            ("ServosList_PositionMin_PhidgetsUnits_UserSet", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
-                                                                                ("ServosList_Velocity_Min_PhidgetsUnits_UserSet", [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]),
-                                                                                ("ServosList_Velocity_Max_PhidgetsUnits_UserSet", [180.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0, 180.0]),
-                                                                                ("ServosList_Velocity_Starting_PhidgetsUnits", [90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0, 90.0]),
-                                                                                ("ServosList_PulseWidthMin_PhidgetsUnits_UserSet", [600.0, 550.0, 550.0, 550.0, 550.0, 550.0, 550.0, 550.0]),
-                                                                                ("ServosList_PulseWidthMax_PhidgetsUnits_UserSet", [2400.0, 2450.0, 2450.0, 2450.0, 2450.0, 2450.0, 2450.0, 2450.0])])
-                                                                                #### IMPLEMENT FAILSAFE
-    if USE_SERVOS_FLAG == 1:
+                                                                                ("ServosList_DataIntervalMilliseconds", [32.0]*NumberOfServos),
+                                                                                ("ServosList_EngagedState_Starting", [1]*NumberOfServos),
+                                                                                ("ServosList_SpeedRampingState_Starting", [0]*NumberOfServos),
+                                                                                ("ServosList_Position_Min_PhidgetsUnits_UserSet", [0.0]*NumberOfServos),
+                                                                                ("ServosList_Position_Max_PhidgetsUnits_UserSet", [180.0]*NumberOfServos),
+                                                                                ("ServosList_Position_Starting_PhidgetsUnits", [90.0]*NumberOfServos),
+                                                                                ("ServosList_Velocity_Min_PhidgetsUnits_UserSet", [0.0]*NumberOfServos),
+                                                                                ("ServosList_Velocity_Max_PhidgetsUnits_UserSet", [180.0]*NumberOfServos),
+                                                                                ("ServosList_Velocity_Starting_PhidgetsUnits", [90.0]*NumberOfServos),
+                                                                                ("ServosList_PulseWidthMin_PhidgetsUnits_UserSet", [600.0]*NumberOfServos),
+                                                                                ("ServosList_PulseWidthMax_PhidgetsUnits_UserSet", [2400.0]*NumberOfServos),
+                                                                                ("ServosList_Voltage_PhidgetsUnits_UserSet", [7.4]*NumberOfServos)])
+                                                                                #### IMPLEMENT FAILSAFE enableFailsafe()
+    if USE_PhidgetsAdvancedServo8MotorRCC0004_FLAG == 1:
         try:
             PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject = PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject_setup_dict)
-            SERVOS_OPEN_FLAG = PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
+            PhidgetsAdvancedServo8MotorRCC0004_OPEN_FLAG = PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
 
         except:
             exceptions = sys.exc_info()[0]
@@ -432,17 +437,17 @@ if __name__ == '__main__':
 
     #################################################
     #################################################
-    if USE_MYPRINT_FLAG == 1:
+    if USE_MyPrint_FLAG == 1:
 
-        MyPrint_ReubenPython2and3ClassObject_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_MYPRINT_FLAG),
+        MyPrint_ReubenPython2and3ClassObject_GUIparametersDict = dict([("USE_GUI_FLAG", USE_GUI_FLAG and SHOW_IN_GUI_MyPrint_FLAG),
                                                                         ("root", Tab_MyPrint),
                                                                         ("UseBorderAroundThisGuiObjectFlag", 0),
-                                                                        ("GUI_ROW", GUI_ROW_MYPRINT),
-                                                                        ("GUI_COLUMN", GUI_COLUMN_MYPRINT),
-                                                                        ("GUI_PADX", GUI_PADX_MYPRINT),
-                                                                        ("GUI_PADY", GUI_PADY_MYPRINT),
-                                                                        ("GUI_ROWSPAN", GUI_ROWSPAN_MYPRINT),
-                                                                        ("GUI_COLUMNSPAN", GUI_COLUMNSPAN_MYPRINT)])
+                                                                        ("GUI_ROW", GUI_ROW_MyPrint),
+                                                                        ("GUI_COLUMN", GUI_COLUMN_MyPrint),
+                                                                        ("GUI_PADX", GUI_PADX_MyPrint),
+                                                                        ("GUI_PADY", GUI_PADY_MyPrint),
+                                                                        ("GUI_ROWSPAN", GUI_ROWSPAN_MyPrint),
+                                                                        ("GUI_COLUMNSPAN", GUI_COLUMNSPAN_MyPrint)])
 
         MyPrint_ReubenPython2and3ClassObject_setup_dict = dict([("NumberOfPrintLines", 10),
                                                                 ("WidthOfPrintingLabel", 200),
@@ -452,7 +457,7 @@ if __name__ == '__main__':
 
         try:
             MyPrint_ReubenPython2and3ClassObject = MyPrint_ReubenPython2and3Class(MyPrint_ReubenPython2and3ClassObject_setup_dict)
-            MYPRINT_OPEN_FLAG = MyPrint_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
+            MyPrint_OPEN_FLAG = MyPrint_ReubenPython2and3ClassObject.OBJECT_CREATED_SUCCESSFULLY_FLAG
 
         except:
             exceptions = sys.exc_info()[0]
@@ -463,7 +468,7 @@ if __name__ == '__main__':
 
     #################################################
     #################################################
-    if USE_SERVOS_FLAG == 1 and SERVOS_OPEN_FLAG != 1:
+    if USE_PhidgetsAdvancedServo8MotorRCC0004_FLAG == 1 and PhidgetsAdvancedServo8MotorRCC0004_OPEN_FLAG != 1:
         print("Failed to open PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class.")
         ExitProgram_Callback()
     #################################################
@@ -471,7 +476,7 @@ if __name__ == '__main__':
 
     #################################################
     #################################################
-    if USE_MYPRINT_FLAG == 1 and MYPRINT_OPEN_FLAG != 1:
+    if USE_MyPrint_FLAG == 1 and MyPrint_OPEN_FLAG != 1:
         print("Failed to open MyPrint_ReubenPython2and3ClassObject.")
         ExitProgram_Callback()
     #################################################
@@ -479,7 +484,7 @@ if __name__ == '__main__':
 
     #################################################
     #################################################
-    if USE_SERVOS_SINUSOIDAL_INPUT_FLAG == 1:
+    if USE_PhidgetsAdvancedServo8MotorRCC0004_SINUSOIDAL_INPUT_FLAG == 1:
         for ServoChannel in range(0, NumberOfServos):
             if ServoChannel in ServosList_TestChannelsList:
                 PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject.SetEnagagedState(ServoChannel, 1)
@@ -498,24 +503,24 @@ if __name__ == '__main__':
         ###################################################
 
         ###################################################
-        if USE_SERVOS_FLAG == 1:
+        if USE_PhidgetsAdvancedServo8MotorRCC0004_FLAG == 1:
 
             ##################### GET's
-            SERVOS_MostRecentDict = PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject.GetMostRecentDataDict()
+            PhidgetsAdvancedServo8MotorRCC0004_MostRecentDict = PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject.GetMostRecentDataDict()
 
-            if "Time" in SERVOS_MostRecentDict:
-                SERVOS_MostRecentDict_ServosList_ErrorCallbackFiredFlag = SERVOS_MostRecentDict["ServosList_ErrorCallbackFiredFlag"]
-                SERVOS_MostRecentDict_Time = SERVOS_MostRecentDict["Time"]
+            if "Time" in PhidgetsAdvancedServo8MotorRCC0004_MostRecentDict:
+                PhidgetsAdvancedServo8MotorRCC0004_MostRecentDict_PhidgetsAdvancedServo8MotorRCC0004List_ErrorCallbackFiredFlag = PhidgetsAdvancedServo8MotorRCC0004_MostRecentDict["ServosList_ErrorCallbackFiredFlag"]
+                PhidgetsAdvancedServo8MotorRCC0004_MostRecentDict_Time = PhidgetsAdvancedServo8MotorRCC0004_MostRecentDict["Time"]
 
-                #print("SERVOS_MostRecentDict_ServosList_State: " + str(SERVOS_MostRecentDict_ServosList_State))
+                #print("PhidgetsAdvancedServo8MotorRCC0004_MostRecentDict_PhidgetsAdvancedServo8MotorRCC0004List_State: " + str(PhidgetsAdvancedServo8MotorRCC0004_MostRecentDict_PhidgetsAdvancedServo8MotorRCC0004List_State))
             #####################
 
             ##################### SET's
             time_gain = math.pi / (2.0 * SINUSOIDAL_MOTION_INPUT_ROMtestTimeToPeakAngle)
 
-            if USE_SERVOS_SINUSOIDAL_INPUT_FLAG == 1:
+            if USE_PhidgetsAdvancedServo8MotorRCC0004_SINUSOIDAL_INPUT_FLAG == 1:
 
-                if USE_SERVOS_POSITION_CONTROL_FLAG == 1:
+                if USE_PhidgetsAdvancedServo8MotorRCC0004_POSITION_CONTROL_FLAG == 1:
                     SINUSOIDAL_INPUT_TO_COMMAND = (SINUSOIDAL_MOTION_INPUT_MaxValue_PositionControl + SINUSOIDAL_MOTION_INPUT_MinValue_PositionControl)/2.0 + 0.5*abs(SINUSOIDAL_MOTION_INPUT_MaxValue_PositionControl - SINUSOIDAL_MOTION_INPUT_MinValue_PositionControl)*math.sin(time_gain*CurrentTime_MainLoopThread)
 
                     for ServoChannel in range(0, NumberOfServos):
@@ -541,12 +546,12 @@ if __name__ == '__main__':
     print("Exiting main program 'test_program_for_PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class.")
 
     #########################################################
-    if SERVOS_OPEN_FLAG == 1:
+    if PhidgetsAdvancedServo8MotorRCC0004_OPEN_FLAG == 1:
         PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3ClassObject.ExitProgram_Callback()
     #########################################################
 
     #########################################################
-    if MYPRINT_OPEN_FLAG == 1:
+    if MyPrint_OPEN_FLAG == 1:
         MyPrint_ReubenPython2and3ClassObject.ExitProgram_Callback()
     #########################################################
 

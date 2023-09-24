@@ -6,7 +6,7 @@ reuben.brewer@gmail.com
 www.reubotics.com
 
 Apache 2 License
-Software Revision I, 09/21/2022
+Software Revision J, 09/24/2023
 
 Verified working on: Python 2.7, 3.8 for Windows 8.1, 10 64-bit, Ubuntu 20.04, and Raspberry Pi Buster (no Mac testing yet).
 '''
@@ -66,6 +66,7 @@ from Phidget22.Phidget import *
 from Phidget22.Devices.Log import *
 from Phidget22.LogLevel import *
 from Phidget22.Devices.RCServo import *
+from Phidget22.RCServoVoltage import *
 ###########################################################
 
 class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclass the Tkinter Frame
@@ -83,96 +84,9 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
         self.EnableInternal_MyPrint_Flag = 0
         self.MainThread_still_running_flag = 0
         self.MostRecentDataDict = dict()
-        #########################################################
-        #########################################################
 
-        #########################################################
-        #########################################################
-        self.NumberOfServos = 8
-
-        self.ServosList_PhidgetsServoObjects = list()
-        self.ServosList_AttachedAndOpenFlag = [-1.0] * self.NumberOfServos
-        self.ServosList_ErrorCallbackFiredFlag = [-1.0] * self.NumberOfServos
-        #########################################################
-        #########################################################
-
-        #########################################################
-        #########################################################
-        self.ServosList_ListOfOnAttachCallbackFunctionNames = [self.Servo0onAttachCallback, self.Servo1onAttachCallback, self.Servo2onAttachCallback, self.Servo3onAttachCallback, self.Servo4onAttachCallback, self.Servo5onAttachCallback, self.Servo6onAttachCallback, self.Servo7onAttachCallback]
-        self.ServosList_ListOfOnDetachCallbackFunctionNames = [self.Servo0onDetachCallback, self.Servo1onDetachCallback, self.Servo2onDetachCallback, self.Servo3onDetachCallback, self.Servo4onDetachCallback, self.Servo5onDetachCallback, self.Servo6onDetachCallback, self.Servo7onDetachCallback]
-        self.ServosList_ListOfOnErrorCallbackFunctionNames = [self.Servo0onErrorCallback, self.Servo1onErrorCallback, self.Servo2onErrorCallback, self.Servo3onErrorCallback, self.Servo4onErrorCallback, self.Servo5onErrorCallback, self.Servo6onErrorCallback, self.Servo7onErrorCallback]
-        self.ServosList_ListOfOnPositionChangeCallbackFunctionNames = [self.Servo0onPositionChangeCallback, self.Servo1onPositionChangeCallback, self.Servo2onPositionChangeCallback, self.Servo3onPositionChangeCallback, self.Servo4onPositionChangeCallback, self.Servo5onPositionChangeCallback, self.Servo6onPositionChangeCallback, self.Servo7onPositionChangeCallback]
-        self.ServosList_ListOfOnVelocityChangeCallbackFunctionNames = [self.Servo0onVelocityChangeCallback, self.Servo1onVelocityChangeCallback, self.Servo2onVelocityChangeCallback, self.Servo3onVelocityChangeCallback, self.Servo4onVelocityChangeCallback, self.Servo5onVelocityChangeCallback, self.Servo6onVelocityChangeCallback, self.Servo7onVelocityChangeCallback]
-        #self.ServosList_ListOfOnTargetPositionReachedCallbackFunctionNames = [self.Servo0onTargetPositionReachedCallback, self.Servo1onTargetPositionReachedCallback, self.Servo2onTargetPositionReachedCallback, self.Servo3onTargetPositionReachedCallback, self.Servo4onTargetPositionReachedCallback, self.Servo5onTargetPositionReachedCallback, self.Servo6onTargetPositionReachedCallback, self.Servo7onTargetPositionReachedCallback]
-        #########################################################
-        #########################################################
-
-        #########################################################
-        #########################################################
-        self.ServosList_Position_ActualRxFromBoard = [-11111.0] * self.NumberOfServos
-        self.ServosList_Position_NeedsToBeChangedFlag = [1] * self.NumberOfServos
-        self.ServosList_Position_ToBeSet = [-11111.0] * self.NumberOfServos
-
-        self.ServosList_Position_Min_PhidgetsUnits_UserSet = [-11111.0] * self.NumberOfServos
-        self.ServosList_Position_Max_PhidgetsUnits_UserSet = [-11111.0] * self.NumberOfServos
-        self.ServosList_Position_Starting_PhidgetsUnits = [-11111.0] * self.NumberOfServos
-
-        self.ServosList_Position_GUIscale_LabelObject = list()
-        self.ServosList_Position_GUIscale_Value = list()
-        self.ServosList_Position_GUIscale_ScaleObject = list()
-        self.ServosList_Position_GUIscale_NeedsToBeChangedFlag = [0] * self.NumberOfServos
-        #########################################################
-        #########################################################
-
-        #########################################################
-        #########################################################
-        self.ServosList_Velocity_ActualRxFromBoard = [-11111.0] * self.NumberOfServos
-        self.ServosList_Velocity_NeedsToBeChangedFlag = [1] * self.NumberOfServos
-        self.ServosList_Velocity_ToBeSet = [-11111.0] * self.NumberOfServos
-
-        self.ServosList_Velocity_Min_PhidgetsUnits_UserSet = [-11111.0] * self.NumberOfServos
-        self.ServosList_Velocity_Max_PhidgetsUnits_UserSet = [-11111.0] * self.NumberOfServos
-        self.ServosList_Velocity_Starting_PhidgetsUnits = [-11111.0] * self.NumberOfServos
-
-        self.ServosList_Velocity_GUIscale_LabelObject = list()
-        self.ServosList_Velocity_GUIscale_Value = list()
-        self.ServosList_Velocity_GUIscale_ScaleObject = list()
-        self.ServosList_Velocity_GUIscale_NeedsToBeChangedFlag = [0] * self.NumberOfServos
-        #########################################################
-        #########################################################
-
-        #########################################################
-        #########################################################
-        self.ServosList_EngagedState_ActualRxFromBoard = [-1] * self.NumberOfServos
-        self.ServosList_EngagedState_NeedsToBeChangedFlag = [1] * self.NumberOfServos
-        self.ServosList_EngagedState_ToBeSet = [-1] * self.NumberOfServos
-        self.ServosList_EngagedState_Starting = [-1] * self.NumberOfServos
-
-        self.ServosList_EngagedState_GUIcheckbutton_Value = list()
-        self.ServosList_EngagedState_GUIcheckbutton_CheckbuttonObject = list()
-        self.ServosList_EngagedState_GUIcheckbutton_NeedsToBeChangedFlag = [0] * self.NumberOfServos
-        #########################################################
-        #########################################################
-
-        #########################################################
-        #########################################################
-        self.ServosList_SpeedRampingState_ActualRxFromBoard = [-1] * self.NumberOfServos
-        self.ServosList_SpeedRampingState_NeedsToBeChangedFlag = [1] * self.NumberOfServos
-        self.ServosList_SpeedRampingState_ToBeSet = [-1] * self.NumberOfServos
-        self.ServosList_SpeedRampingState_Starting = [-1] * self.NumberOfServos
-
-        self.ServosList_SpeedRampingState_GUIcheckbutton_Value = list()
-        self.ServosList_SpeedRampingState_GUIcheckbutton_CheckbuttonObject = list()
-        self.ServosList_SpeedRampingState_GUIcheckbutton_NeedsToBeChangedFlag = [0] * self.NumberOfServos
-        #########################################################
-        #########################################################
-
-        #########################################################
-        #########################################################
-        self.ServosList_PulseWidthMin_PhidgetsUnits_UserSet = [-11111.0] * self.NumberOfServos
-        self.ServosList_PulseWidthMax_PhidgetsUnits_UserSet = [-11111.0] * self.NumberOfServos
-
-        self.ServosList_DataIntervalMilliseconds = [-11111.0] * self.NumberOfServos
+        self.DesiredBoardEnglishName_AcceptableValuesList = ["RCC0004", "RCC1000"]
+        self.Voltage_AcceptableValuesList = [5.0, 6.0, 7.4]
         #########################################################
         #########################################################
 
@@ -345,6 +259,124 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
 
         #########################################################
         #########################################################
+        if "DesiredBoardEnglishName" in setup_dict:
+            DesiredBoardEnglishName_TEMP = str(setup_dict["DesiredBoardEnglishName"])
+
+            if DesiredBoardEnglishName_TEMP in self.DesiredBoardEnglishName_AcceptableValuesList:
+                self.DesiredBoardEnglishName = DesiredBoardEnglishName_TEMP
+
+                #########################################################
+                if self.DesiredBoardEnglishName == "RCC0004":
+                    self.NumberOfServos = 8
+
+                elif self.DesiredBoardEnglishName == "RCC1000":
+                    self.NumberOfServos = 16
+
+                else:
+                    self.NumberOfServos = -1
+                #########################################################
+
+            else:
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, DesiredBoardEnglishName must be contained in " + str(self.DesiredBoardEnglishName_AcceptableValuesList))
+                return
+        else:
+            print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Must input DesiredBoardEnglishName.")
+            return
+        
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: DesiredBoardEnglishName: " + str(self.DesiredBoardEnglishName))
+        #########################################################
+        #########################################################
+
+        #########################################################
+        #########################################################
+        self.ServosList_PhidgetsServoObjects = list()
+        self.ServosList_AttachedAndOpenFlag = [-1.0] * self.NumberOfServos
+        self.ServosList_ErrorCallbackFiredFlag = [-1.0] * self.NumberOfServos
+        #########################################################
+        #########################################################
+
+        #########################################################
+        #########################################################
+        self.ServosList_ListOfOnAttachCallbackFunctionNames = [self.Servo0onAttachCallback, self.Servo1onAttachCallback, self.Servo2onAttachCallback, self.Servo3onAttachCallback, self.Servo4onAttachCallback, self.Servo5onAttachCallback, self.Servo6onAttachCallback, self.Servo7onAttachCallback, self.Servo8onAttachCallback, self.Servo9onAttachCallback, self.Servo10onAttachCallback, self.Servo11onAttachCallback, self.Servo12onAttachCallback, self.Servo13onAttachCallback, self.Servo14onAttachCallback, self.Servo15onAttachCallback]
+        self.ServosList_ListOfOnDetachCallbackFunctionNames = [self.Servo0onDetachCallback, self.Servo1onDetachCallback, self.Servo2onDetachCallback, self.Servo3onDetachCallback, self.Servo4onDetachCallback, self.Servo5onDetachCallback, self.Servo6onDetachCallback, self.Servo7onDetachCallback, self.Servo8onDetachCallback, self.Servo9onDetachCallback, self.Servo10onDetachCallback, self.Servo11onDetachCallback, self.Servo12onDetachCallback, self.Servo13onDetachCallback, self.Servo14onDetachCallback, self.Servo15onDetachCallback]
+        self.ServosList_ListOfOnErrorCallbackFunctionNames = [self.Servo0onErrorCallback, self.Servo1onErrorCallback, self.Servo2onErrorCallback, self.Servo3onErrorCallback, self.Servo4onErrorCallback, self.Servo5onErrorCallback, self.Servo6onErrorCallback, self.Servo7onErrorCallback, self.Servo8onErrorCallback, self.Servo9onErrorCallback, self.Servo10onErrorCallback, self.Servo11onErrorCallback, self.Servo12onErrorCallback, self.Servo13onErrorCallback, self.Servo14onErrorCallback, self.Servo15onErrorCallback]
+        self.ServosList_ListOfOnPositionChangeCallbackFunctionNames = [self.Servo0onPositionChangeCallback, self.Servo1onPositionChangeCallback, self.Servo2onPositionChangeCallback, self.Servo3onPositionChangeCallback, self.Servo4onPositionChangeCallback, self.Servo5onPositionChangeCallback, self.Servo6onPositionChangeCallback, self.Servo7onPositionChangeCallback, self.Servo8onPositionChangeCallback, self.Servo9onPositionChangeCallback, self.Servo10onPositionChangeCallback, self.Servo11onPositionChangeCallback, self.Servo12onPositionChangeCallback, self.Servo13onPositionChangeCallback, self.Servo14onPositionChangeCallback, self.Servo15onPositionChangeCallback]
+        self.ServosList_ListOfOnVelocityChangeCallbackFunctionNames = [self.Servo0onVelocityChangeCallback, self.Servo1onVelocityChangeCallback, self.Servo2onVelocityChangeCallback, self.Servo3onVelocityChangeCallback, self.Servo4onVelocityChangeCallback, self.Servo5onVelocityChangeCallback, self.Servo6onVelocityChangeCallback, self.Servo7onVelocityChangeCallback, self.Servo8onVelocityChangeCallback, self.Servo9onVelocityChangeCallback, self.Servo10onVelocityChangeCallback, self.Servo11onVelocityChangeCallback, self.Servo12onVelocityChangeCallback, self.Servo13onVelocityChangeCallback, self.Servo14onVelocityChangeCallback, self.Servo15onVelocityChangeCallback]
+        #self.ServosList_ListOfOnTargetPositionReachedCallbackFunctionNames = [self.Servo0onTargetPositionReachedCallback, self.Servo1onTargetPositionReachedCallback, self.Servo2onTargetPositionReachedCallback, self.Servo3onTargetPositionReachedCallback, self.Servo4onTargetPositionReachedCallback, self.Servo5onTargetPositionReachedCallback, self.Servo6onTargetPositionReachedCallback, self.Servo7onTargetPositionReachedCallback, self.Servo8onTargetPositionReachedCallback, self.Servo9onTargetPositionReachedCallback, self.Servo10onTargetPositionReachedCallback, self.Servo11onTargetPositionReachedCallback, self.Servo12onTargetPositionReachedCallback, self.Servo13onTargetPositionReachedCallback, self.Servo14onTargetPositionReachedCallback, self.Servo15onTargetPositionReachedCallback]
+        #########################################################
+        #########################################################
+
+        #########################################################
+        #########################################################
+        self.ServosList_Position_ActualRxFromBoard = [-11111.0] * self.NumberOfServos
+        self.ServosList_Position_NeedsToBeChangedFlag = [1] * self.NumberOfServos
+        self.ServosList_Position_ToBeSet = [-11111.0] * self.NumberOfServos
+
+        self.ServosList_Position_Min_PhidgetsUnits_UserSet = [-11111.0] * self.NumberOfServos
+        self.ServosList_Position_Max_PhidgetsUnits_UserSet = [-11111.0] * self.NumberOfServos
+        self.ServosList_Position_Starting_PhidgetsUnits = [-11111.0] * self.NumberOfServos
+
+        self.ServosList_Position_GUIscale_LabelObject = list()
+        self.ServosList_Position_GUIscale_Value = list()
+        self.ServosList_Position_GUIscale_ScaleObject = list()
+        self.ServosList_Position_GUIscale_NeedsToBeChangedFlag = [0] * self.NumberOfServos
+        #########################################################
+        #########################################################
+
+        #########################################################
+        #########################################################
+        self.ServosList_Velocity_ActualRxFromBoard = [-11111.0] * self.NumberOfServos
+        self.ServosList_Velocity_NeedsToBeChangedFlag = [1] * self.NumberOfServos
+        self.ServosList_Velocity_ToBeSet = [-11111.0] * self.NumberOfServos
+
+        self.ServosList_Velocity_Min_PhidgetsUnits_UserSet = [-11111.0] * self.NumberOfServos
+        self.ServosList_Velocity_Max_PhidgetsUnits_UserSet = [-11111.0] * self.NumberOfServos
+        self.ServosList_Velocity_Starting_PhidgetsUnits = [-11111.0] * self.NumberOfServos
+
+        self.ServosList_Velocity_GUIscale_LabelObject = list()
+        self.ServosList_Velocity_GUIscale_Value = list()
+        self.ServosList_Velocity_GUIscale_ScaleObject = list()
+        self.ServosList_Velocity_GUIscale_NeedsToBeChangedFlag = [0] * self.NumberOfServos
+        #########################################################
+        #########################################################
+
+        #########################################################
+        #########################################################
+        self.ServosList_EngagedState_ActualRxFromBoard = [-1] * self.NumberOfServos
+        self.ServosList_EngagedState_NeedsToBeChangedFlag = [1] * self.NumberOfServos
+        self.ServosList_EngagedState_ToBeSet = [-1] * self.NumberOfServos
+        self.ServosList_EngagedState_Starting = [-1] * self.NumberOfServos
+
+        self.ServosList_EngagedState_GUIcheckbutton_Value = list()
+        self.ServosList_EngagedState_GUIcheckbutton_CheckbuttonObject = list()
+        self.ServosList_EngagedState_GUIcheckbutton_NeedsToBeChangedFlag = [0] * self.NumberOfServos
+        #########################################################
+        #########################################################
+
+        #########################################################
+        #########################################################
+        self.ServosList_SpeedRampingState_ActualRxFromBoard = [-1] * self.NumberOfServos
+        self.ServosList_SpeedRampingState_NeedsToBeChangedFlag = [1] * self.NumberOfServos
+        self.ServosList_SpeedRampingState_ToBeSet = [-1] * self.NumberOfServos
+        self.ServosList_SpeedRampingState_Starting = [-1] * self.NumberOfServos
+
+        self.ServosList_SpeedRampingState_GUIcheckbutton_Value = list()
+        self.ServosList_SpeedRampingState_GUIcheckbutton_CheckbuttonObject = list()
+        self.ServosList_SpeedRampingState_GUIcheckbutton_NeedsToBeChangedFlag = [0] * self.NumberOfServos
+        #########################################################
+        #########################################################
+
+        #########################################################
+        #########################################################
+        self.ServosList_PulseWidthMin_PhidgetsUnits_UserSet = [-11111.0] * self.NumberOfServos
+        self.ServosList_PulseWidthMax_PhidgetsUnits_UserSet = [-11111.0] * self.NumberOfServos
+        self.ServosList_Voltage_PhidgetsUnits_UserSet = [-11111.0] * self.NumberOfServos
+        self.ServosList_DataIntervalMilliseconds = [-11111.0] * self.NumberOfServos
+        #########################################################
+        #########################################################
+
+        #########################################################
+        #########################################################
         if "DesiredSerialNumber" in setup_dict:
             try:
                 self.DesiredSerialNumber = int(setup_dict["DesiredSerialNumber"])
@@ -415,11 +447,11 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_DataIntervalMilliseconds[ServoChannel] = int(self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_DataIntervalMilliseconds, ServoChannel " + str(ServoChannel), ServosList_DataIntervalMilliseconds_TEMP_ELEMENT, 32.0, 60000.0))
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_DataIntervalMilliseconds must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_DataIntervalMilliseconds must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_DataIntervalMilliseconds must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_DataIntervalMilliseconds must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
@@ -441,11 +473,11 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_EngagedState_Starting[ServoChannel] = int(self.PassThrough0and1values_ExitProgramOtherwise("ServosList_EngagedState_Starting, ServoChannel " + str(ServoChannel), ServosList_EngagedState_Starting_TEMP_ELEMENT))
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_EngagedState_Starting must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_EngagedState_Starting must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_EngagedState_Starting must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_EngagedState_Starting must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
@@ -473,11 +505,11 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_SpeedRampingState_Starting[ServoChannel] = int(self.PassThrough0and1values_ExitProgramOtherwise("ServosList_SpeedRampingState_Starting, ServoChannel " + str(ServoChannel), ServosList_SpeedRampingState_Starting_TEMP_ELEMENT))
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_SpeedRampingState_Starting must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_SpeedRampingState_Starting must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_SpeedRampingState_Starting must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_SpeedRampingState_Starting must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
@@ -505,11 +537,11 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_Position_Min_PhidgetsUnits_UserSet[ServoChannel] = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_Position_Min_PhidgetsUnits_UserSet, ServoChannel " + str(ServoChannel), ServosList_Position_Min_PhidgetsUnits_TEMP_ELEMENT, -1000000.0, 1000000.0)
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Position_Min_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_Position_Min_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Position_Min_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_Position_Min_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
@@ -531,11 +563,11 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_Position_Max_PhidgetsUnits_UserSet[ServoChannel] = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_Position_Max_PhidgetsUnits_UserSet, ServoChannel " + str(ServoChannel), ServosList_Position_Max_PhidgetsUnits_TEMP_ELEMENT, -1000000.0, 1000000.0)
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Position_Max_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_Position_Max_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Position_Max_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_Position_Max_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
@@ -549,7 +581,7 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
         #########################################################
         for ServoChannel in range(0, self.NumberOfServos):
             if self.ServosList_Position_Max_PhidgetsUnits_UserSet[ServoChannel] <= self.ServosList_Position_Min_PhidgetsUnits_UserSet[ServoChannel]:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, Position_Max is smaller than or equal to Position_Min for ServoChannel " + str(ServoChannel))
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, Position_Max is smaller than or equal to Position_Min for ServoChannel " + str(ServoChannel))
                 return
         #########################################################
         #########################################################
@@ -566,11 +598,11 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_Position_Starting_PhidgetsUnits[ServoChannel] = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_Position_Starting_PhidgetsUnits, ServoChannel " + str(ServoChannel), ServosList_Position_Starting_PhidgetsUnits_TEMP_ELEMENT, self.ServosList_Position_Min_PhidgetsUnits_UserSet[ServoChannel], self.ServosList_Position_Max_PhidgetsUnits_UserSet[ServoChannel])
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Position_Starting_PhidgetsUnits must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_Position_Starting_PhidgetsUnits must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Position_Starting_PhidgetsUnits must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_Position_Starting_PhidgetsUnits must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
@@ -598,11 +630,11 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_Velocity_Min_PhidgetsUnits_UserSet[ServoChannel] = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_Velocity_Min_PhidgetsUnits_UserSet, ServoChannel " + str(ServoChannel), ServosList_Velocity_Min_PhidgetsUnits_TEMP_ELEMENT, 0.0, 6467.368)
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Velocity_Min_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_Velocity_Min_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Velocity_Min_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_Velocity_Min_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
@@ -624,11 +656,11 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_Velocity_Max_PhidgetsUnits_UserSet[ServoChannel] = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_Velocity_Max_PhidgetsUnits_UserSet, ServoChannel " + str(ServoChannel), ServosList_Velocity_Max_PhidgetsUnits_TEMP_ELEMENT, 0.0, 6467.368)
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Velocity_Max_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_Velocity_Max_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Velocity_Max_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_Velocity_Max_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
@@ -642,7 +674,7 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
         #########################################################
         for ServoChannel in range(0, self.NumberOfServos):
             if self.ServosList_Velocity_Max_PhidgetsUnits_UserSet[ServoChannel] <= self.ServosList_Velocity_Min_PhidgetsUnits_UserSet[ServoChannel]:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, Velocity_Max is smaller than or equal to Velocity_Min for ServoChannel " + str(ServoChannel))
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, Velocity_Max is smaller than or equal to Velocity_Min for ServoChannel " + str(ServoChannel))
                 return
         #########################################################
         #########################################################
@@ -659,11 +691,11 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_Velocity_Starting_PhidgetsUnits[ServoChannel] = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_Velocity_Starting_PhidgetsUnits, ServoChannel " + str(ServoChannel), ServosList_Velocity_Starting_PhidgetsUnits_TEMP_ELEMENT, self.ServosList_Velocity_Min_PhidgetsUnits_UserSet[ServoChannel], self.ServosList_Velocity_Max_PhidgetsUnits_UserSet[ServoChannel])
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Velocity_Starting_PhidgetsUnits must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_Velocity_Starting_PhidgetsUnits must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_Velocity_Starting_PhidgetsUnits must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_Velocity_Starting_PhidgetsUnits must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
@@ -691,11 +723,11 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_PulseWidthMin_PhidgetsUnits_UserSet[ServoChannel] = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_PulseWidthMin_PhidgetsUnits_UserSet, ServoChannel " + str(ServoChannel), ServosList_PulseWidthMin_PhidgetsUnits_TEMP_ELEMENT, 0.083, 2730.666)
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_PulseWidthMin_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_PulseWidthMin_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_PulseWidthMin_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_PulseWidthMin_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
@@ -717,17 +749,67 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_PulseWidthMax_PhidgetsUnits_UserSet[ServoChannel] = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_PulseWidthMax_PhidgetsUnits_UserSet, ServoChannel " + str(ServoChannel), ServosList_PulseWidthMax_PhidgetsUnits_TEMP_ELEMENT, 0.083, 2730.666)
 
                 else:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_PulseWidthMax_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_PulseWidthMax_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                     return
 
             else:
-                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class  __init__: Error, ServosList_PulseWidthMax_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_PulseWidthMax_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " numbers.")
                 return
 
         else:
             self.ServosList_PulseWidthMax_PhidgetsUnits_UserSet = [0.0]*self.NumberOfServos
 
         print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: ServosList_PulseWidthMax_PhidgetsUnits_UserSet: " + str(self.ServosList_PulseWidthMax_PhidgetsUnits_UserSet))
+        #########################################################
+        #########################################################
+
+        #########################################################
+        #########################################################
+        if "ServosList_Voltage_PhidgetsUnits_UserSet" in setup_dict:
+            ServosList_Voltage_PhidgetsUnits_UserSet_TEMP = setup_dict["ServosList_Voltage_PhidgetsUnits_UserSet"]
+
+            if self.IsInputListOfNumbers(ServosList_Voltage_PhidgetsUnits_UserSet_TEMP) == 1:
+                if len(ServosList_Voltage_PhidgetsUnits_UserSet_TEMP) == self.NumberOfServos:
+
+                    for ServoChannel, ServosList_Voltage_PhidgetsUnits_TEMP_ELEMENT in enumerate(ServosList_Voltage_PhidgetsUnits_UserSet_TEMP):
+                        ServosList_Voltage_PhidgetsUnits_TEMP_ELEMENT = self.PassThroughFloatValuesInRange_ExitProgramOtherwise("ServosList_Voltage_PhidgetsUnits_UserSet, ServoChannel " + str(ServoChannel), ServosList_Voltage_PhidgetsUnits_TEMP_ELEMENT, 5.0, 7.4)
+
+                        if ServosList_Voltage_PhidgetsUnits_TEMP_ELEMENT != ServosList_Voltage_PhidgetsUnits_UserSet_TEMP[0]:
+                            print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_Voltage_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " IDENTICAL numbers.")
+                            return
+
+                        if ServosList_Voltage_PhidgetsUnits_TEMP_ELEMENT in self.Voltage_AcceptableValuesList:
+
+                            #########################################################
+                            if ServosList_Voltage_PhidgetsUnits_TEMP_ELEMENT == 5.0:
+                                self.ServosList_Voltage_PhidgetsUnits_UserSet[ServoChannel] = RCServoVoltage.RCSERVO_VOLTAGE_5V
+
+                            elif ServosList_Voltage_PhidgetsUnits_TEMP_ELEMENT == 6.0:
+                                self.ServosList_Voltage_PhidgetsUnits_UserSet[ServoChannel] = RCServoVoltage.RCSERVO_VOLTAGE_6V
+
+                            elif ServosList_Voltage_PhidgetsUnits_TEMP_ELEMENT == 7.4:
+                                self.ServosList_Voltage_PhidgetsUnits_UserSet[ServoChannel] = RCServoVoltage.RCSERVO_VOLTAGE_7_4V
+
+                            else:
+                                self.ServosList_Voltage_PhidgetsUnits_UserSet[ServoChannel] = RCServoVoltage.RCSERVO_VOLTAGE_5V
+                            #########################################################
+
+                        else:
+                            print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_Voltage_PhidgetsUnits_UserSet can only contain values in the set " + str(self.Voltage_AcceptableValuesList))
+                            return
+
+                else:
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_Voltage_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " IDENTICAL numbers.")
+                    return
+
+            else:
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Error, ServosList_Voltage_PhidgetsUnits_UserSet must be a list of " + str(self.NumberOfServos) + " IDENTICAL numbers.")
+                return
+
+        else:
+            self.ServosList_Voltage_PhidgetsUnits_UserSet = [Phidget.RCSERVO_VOLTAGE_5V]*self.NumberOfServos
+
+        print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: ServosList_Voltage_PhidgetsUnits_UserSet: " + str(self.ServosList_Voltage_PhidgetsUnits_UserSet))
         #########################################################
         #########################################################
 
@@ -751,6 +833,7 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
         self.DetectedDeviceID = "default"
         self.DetectedDeviceVersion = "default"
         self.DetectedDeviceSerialNumber = "default"
+        self.DetectedBoardEnglishName = "default"
         #########################################################
         #########################################################
 
@@ -790,61 +873,84 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
             if self.UsePhidgetsLoggingInternalToThisClassObjectFlag == 1:
                 try:
                     Log.enable(LogLevel.PHIDGET_LOG_INFO, os.getcwd() + "\PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class_PhidgetLog_INFO.txt")
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__Enabled Phidget Logging.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Enabled Phidget Logging.")
                 except PhidgetException as e:
-                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__Failed to enable Phidget Logging, Phidget Exception %i: %s" % (e.code, e.details))
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Failed to enable Phidget Logging, Phidget Exception %i: %s" % (e.code, e.details))
             #########################################################
 
             #########################################################
             try:
                 self.DetectedDeviceName = self.ServosList_PhidgetsServoObjects[0].getDeviceName()
-                print("DetectedDeviceName: " + self.DetectedDeviceName)
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: DetectedDeviceName: " + self.DetectedDeviceName)
 
             except PhidgetException as e:
-                print("Failed to call 'getDeviceName', Phidget Exception %i: %s" % (e.code, e.details))
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Failed to call 'getDeviceName', Phidget Exception %i: %s" % (e.code, e.details))
             #########################################################
 
             #########################################################
             try:
                 self.DetectedDeviceSerialNumber = self.ServosList_PhidgetsServoObjects[0].getDeviceSerialNumber()
-                print("DetectedDeviceSerialNumber: " + str(self.DetectedDeviceSerialNumber))
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: DetectedDeviceSerialNumber: " + str(self.DetectedDeviceSerialNumber))
 
             except PhidgetException as e:
-                print("Failed to call 'getDeviceSerialNumber', Phidget Exception %i: %s" % (e.code, e.details))
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Failed to call 'getDeviceSerialNumber', Phidget Exception %i: %s" % (e.code, e.details))
             #########################################################
 
             #########################################################
             try:
                 self.DetectedDeviceID = self.ServosList_PhidgetsServoObjects[0].getDeviceID()
-                print("DetectedDeviceID: " + str(self.DetectedDeviceID))
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: DetectedDeviceID: " + str(self.DetectedDeviceID))
 
             except PhidgetException as e:
-                print("Failed to call 'getDeviceID', Phidget Exception %i: %s" % (e.code, e.details))
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Failed to call 'getDeviceID', Phidget Exception %i: %s" % (e.code, e.details))
+            #########################################################
+
+            #########################################################
             #########################################################
 
             #########################################################
             try:
                 self.DetectedDeviceVersion = self.ServosList_PhidgetsServoObjects[0].getDeviceVersion()
-                print("DetectedDeviceVersion: " + str(self.DetectedDeviceVersion))
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: DetectedDeviceVersion: " + str(self.DetectedDeviceVersion))
 
             except PhidgetException as e:
-                print("Failed to call 'getDeviceVersion', Phidget Exception %i: %s" % (e.code, e.details))
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Failed to call 'getDeviceVersion', Phidget Exception %i: %s" % (e.code, e.details))
+            #########################################################
+
+            ######################################################### DetectedDeviceVersion differentiates but isn't long-term, reliable method.
+            if str(self.DetectedDeviceVersion)[0] == "1":
+                self.DetectedBoardEnglishName = "RCC1000"
+
+            elif str(self.DetectedDeviceVersion)[0]  == "4":
+                self.DetectedBoardEnglishName = "RCC0004"
+
+            else:
+                self.DetectedBoardEnglishName = "default"
+
+            print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: self.DetectedBoardEnglishName: " + str(self.DetectedBoardEnglishName))
+
+            if self.DetectedBoardEnglishName != self.DesiredBoardEnglishName:
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: self.DetectedBoardEnglishName: " + str(self.DetectedBoardEnglishName) + " does not match self.DesiredBoardEnglishName: " + str(self.DesiredBoardEnglishName))
+                return
+            #########################################################
+
+            #########################################################
             #########################################################
 
             #########################################################
             try:
                 self.DetectedDeviceLibraryVersion = self.ServosList_PhidgetsServoObjects[0].getLibraryVersion()
-                print("DetectedDeviceLibraryVersion: " + str(self.DetectedDeviceLibraryVersion))
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: DetectedDeviceLibraryVersion: " + str(self.DetectedDeviceLibraryVersion))
 
             except PhidgetException as e:
-                print("Failed to call 'getLibraryVersion', Phidget Exception %i: %s" % (e.code, e.details))
+                print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Failed to call 'getLibraryVersion', Phidget Exception %i: %s" % (e.code, e.details))
             #########################################################
 
             #########################################################
             if self.DesiredSerialNumber != -1: #'-1' means we should open the device regardless os serial number.
                 if self.DetectedDeviceSerialNumber != self.DesiredSerialNumber:
-                    print("The desired Serial Number (" + str(self.DesiredSerialNumber) + ") does not match the detected serial number (" + str(self.DetectedDeviceSerialNumber) + ").")
-                    input("Press any key (and enter) to exit.")
+                    print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: The desired Serial Number (" + str(self.DesiredSerialNumber) + ") does not match the detected serial number (" + str(self.DetectedDeviceSerialNumber) + ").")
+                    input("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class __init__: Press any key (and enter) to exit.")
                     sys.exit()
             #########################################################
 
@@ -964,22 +1070,31 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
     def ServoGENERALonAttachCallback(self, ServoChannel):
 
         try:
-            self.ServosList_PhidgetsServoObjects[ServoChannel].setDataInterval(self.ServosList_DataIntervalMilliseconds[ServoChannel])
+            if self.DetectedBoardEnglishName == "RCC0004":
+                self.ServosList_PhidgetsServoObjects[ServoChannel].setDataInterval(self.ServosList_DataIntervalMilliseconds[ServoChannel])
+                #self.MyPrint_WithoutLogFile("$$$$$$$$$$ ServoGENERALonAttachCallback event for ServoChannel, getDataInterval() for " + str(ServoChannel) + ", returning: " + str(self.ServosList_PhidgetsServoObjects[ServoChannel].getDataInterval()))
 
             self.ServosList_PhidgetsServoObjects[ServoChannel].setMinPosition(self.ServosList_Position_Min_PhidgetsUnits_UserSet[ServoChannel])
+            #self.MyPrint_WithoutLogFile("$$$$$$$$$$ ServoGENERALonAttachCallback event for ServoChannel, getMinPosition() for " + str(ServoChannel) + ", returning: " + str(self.ServosList_PhidgetsServoObjects[ServoChannel].getMinPosition()))
 
             self.ServosList_PhidgetsServoObjects[ServoChannel].setMaxPosition(self.ServosList_Position_Max_PhidgetsUnits_UserSet[ServoChannel])
+            #self.MyPrint_WithoutLogFile("$$$$$$$$$$ ServoGENERALonAttachCallback event for ServoChannel, getMaxPosition() for " + str(ServoChannel) + ", returning: " + str(self.ServosList_PhidgetsServoObjects[ServoChannel].getMaxPosition()))
 
             self.ServosList_PhidgetsServoObjects[ServoChannel].setMinPulseWidth(self.ServosList_PulseWidthMin_PhidgetsUnits_UserSet[ServoChannel])
+            #self.MyPrint_WithoutLogFile("$$$$$$$$$$ ServoGENERALonAttachCallback event for ServoChannel, getMinPulseWidth() for " + str(ServoChannel) + ", returning: " + str(self.ServosList_PhidgetsServoObjects[ServoChannel].getMinPulseWidth()))
 
             self.ServosList_PhidgetsServoObjects[ServoChannel].setMaxPulseWidth(self.ServosList_PulseWidthMax_PhidgetsUnits_UserSet[ServoChannel])
+            #self.MyPrint_WithoutLogFile("$$$$$$$$$$ ServoGENERALonAttachCallback event for ServoChannel, getMaxPulseWidth() for " + str(ServoChannel) + ", returning: " + str(self.ServosList_PhidgetsServoObjects[ServoChannel].getMaxPulseWidth()))
+
+            self.ServosList_PhidgetsServoObjects[ServoChannel].setVoltage(self.ServosList_Voltage_PhidgetsUnits_UserSet[ServoChannel])
+            #self.MyPrint_WithoutLogFile("$$$$$$$$$$ ServoGENERALonAttachCallback event for ServoChannel, getVoltage() for " + str(ServoChannel) + ", returning: " + str(self.ServosList_PhidgetsServoObjects[ServoChannel].getVoltage()))
 
             self.ServosList_AttachedAndOpenFlag[ServoChannel] = 1
-            self.MyPrint_WithoutLogFile("$$$$$$$$$$ ServoGENERALonAttachCallback event for ServoChannel " + str(ServoChannel) + ", Attached! $$$$$$$$$$")
+            #self.MyPrint_WithoutLogFile("$$$$$$$$$$ ServoGENERALonAttachCallback event for ServoChannel " + str(ServoChannel) + ", Attached! $$$$$$$$$$")
 
         except PhidgetException as e:
             self.ServosList_AttachedAndOpenFlag[ServoChannel] = 0
-            self.MyPrint_WithoutLogFile("ServoGENERALonAttachCallback event for ServoChannel " + str(ServoChannel) + ", ERROR: Failed to attach DigitalOutput0, Phidget Exception %i: %s" % (e.code, e.details))
+            self.MyPrint_WithoutLogFile("ServoGENERALonAttachCallback event for ServoChannel " + str(ServoChannel) + ", Phidget Exception %i: %s" % (e.code, e.details))
     ##########################################################################################################
     ##########################################################################################################
 
@@ -995,7 +1110,7 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
             time.sleep(0.250)
 
         except PhidgetException as e:
-            self.MyPrint_WithoutLogFile("ServoGENERALonDetachCallback event for DigitalOutput Channel " + str(ServoChannel) + ", failed to openWaitForAttachment, Phidget Exception %i: %s" % (e.code, e.details))
+            self.MyPrint_WithoutLogFile("ServoGENERALonDetachCallback event for ServoChannel " + str(ServoChannel) + ", Phidget Exception %i: %s" % (e.code, e.details))
     ##########################################################################################################
     ##########################################################################################################
 
@@ -1005,7 +1120,7 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
 
         self.ServosList_ErrorCallbackFiredFlag[ServoChannel] = 1
 
-        self.MyPrint_WithoutLogFile("ServoGENERALonErrorCallback event for DigitalOutput Channel " + str(ServoChannel) + ", Error Code " + ErrorEventCode.getName(code) + ", description: " + str(description))
+        self.MyPrint_WithoutLogFile("ServoGENERALonErrorCallback event for ServoChannell " + str(ServoChannel) + ", Error Code " + ErrorEventCode.getName(code) + ", description: " + str(description))
     ##########################################################################################################
     ##########################################################################################################
 
@@ -1435,6 +1550,406 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
 
     ##########################################################################################################
     ##########################################################################################################
+    def Servo8onAttachCallback(self, HandlerSelf):
+
+        ServoChannel = 8
+        self.ServoGENERALonAttachCallback(ServoChannel)
+
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo8onDetachCallback(self, HandlerSelf):
+
+        ServoChannel = 8
+        self.ServoGENERALonDetachCallback(ServoChannel)
+
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo8onErrorCallback(self, HandlerSelf, code, description):
+
+        ServoChannel = 8
+        self.ServoGENERALonErrorCallback(ServoChannel, code, description)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo8onPositionChangeCallback(self, HandlerSelf, UpdatedPositionFromBoard):
+
+        ServoChannel = 8
+        self.ServoGENERALonPositionChangeCallback(ServoChannel, UpdatedPositionFromBoard)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo8onVelocityChangeCallback(self, HandlerSelf, UpdatedVelocityFromBoard):
+
+        ServoChannel = 8
+        self.ServoGENERALonVelocityChangeCallback(ServoChannel, UpdatedVelocityFromBoard)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo9onAttachCallback(self, HandlerSelf):
+
+        ServoChannel = 9
+        self.ServoGENERALonAttachCallback(ServoChannel)
+
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo9onDetachCallback(self, HandlerSelf):
+
+        ServoChannel = 9
+        self.ServoGENERALonDetachCallback(ServoChannel)
+
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo9onErrorCallback(self, HandlerSelf, code, description):
+
+        ServoChannel = 9
+        self.ServoGENERALonErrorCallback(ServoChannel, code, description)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo9onPositionChangeCallback(self, HandlerSelf, UpdatedPositionFromBoard):
+
+        ServoChannel = 9
+        self.ServoGENERALonPositionChangeCallback(ServoChannel, UpdatedPositionFromBoard)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo9onVelocityChangeCallback(self, HandlerSelf, UpdatedVelocityFromBoard):
+
+        ServoChannel = 9
+        self.ServoGENERALonVelocityChangeCallback(ServoChannel, UpdatedVelocityFromBoard)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo10onAttachCallback(self, HandlerSelf):
+
+        ServoChannel = 10
+        self.ServoGENERALonAttachCallback(ServoChannel)
+
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo10onDetachCallback(self, HandlerSelf):
+
+        ServoChannel = 10
+        self.ServoGENERALonDetachCallback(ServoChannel)
+
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo10onErrorCallback(self, HandlerSelf, code, description):
+
+        ServoChannel = 10
+        self.ServoGENERALonErrorCallback(ServoChannel, code, description)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo10onPositionChangeCallback(self, HandlerSelf, UpdatedPositionFromBoard):
+
+        ServoChannel = 10
+        self.ServoGENERALonPositionChangeCallback(ServoChannel, UpdatedPositionFromBoard)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo10onVelocityChangeCallback(self, HandlerSelf, UpdatedVelocityFromBoard):
+
+        ServoChannel = 10
+        self.ServoGENERALonVelocityChangeCallback(ServoChannel, UpdatedVelocityFromBoard)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo11onAttachCallback(self, HandlerSelf):
+
+        ServoChannel = 11
+        self.ServoGENERALonAttachCallback(ServoChannel)
+
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo11onDetachCallback(self, HandlerSelf):
+
+        ServoChannel = 11
+        self.ServoGENERALonDetachCallback(ServoChannel)
+
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo11onErrorCallback(self, HandlerSelf, code, description):
+
+        ServoChannel = 11
+        self.ServoGENERALonErrorCallback(ServoChannel, code, description)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo11onPositionChangeCallback(self, HandlerSelf, UpdatedPositionFromBoard):
+
+        ServoChannel = 11
+        self.ServoGENERALonPositionChangeCallback(ServoChannel, UpdatedPositionFromBoard)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo11onVelocityChangeCallback(self, HandlerSelf, UpdatedVelocityFromBoard):
+
+        ServoChannel = 11
+        self.ServoGENERALonVelocityChangeCallback(ServoChannel, UpdatedVelocityFromBoard)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo12onAttachCallback(self, HandlerSelf):
+
+        ServoChannel = 12
+        self.ServoGENERALonAttachCallback(ServoChannel)
+
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo12onDetachCallback(self, HandlerSelf):
+
+        ServoChannel = 12
+        self.ServoGENERALonDetachCallback(ServoChannel)
+
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo12onErrorCallback(self, HandlerSelf, code, description):
+
+        ServoChannel = 12
+        self.ServoGENERALonErrorCallback(ServoChannel, code, description)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo12onPositionChangeCallback(self, HandlerSelf, UpdatedPositionFromBoard):
+
+        ServoChannel = 12
+        self.ServoGENERALonPositionChangeCallback(ServoChannel, UpdatedPositionFromBoard)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo12onVelocityChangeCallback(self, HandlerSelf, UpdatedVelocityFromBoard):
+
+        ServoChannel = 12
+        self.ServoGENERALonVelocityChangeCallback(ServoChannel, UpdatedVelocityFromBoard)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo13onAttachCallback(self, HandlerSelf):
+
+        ServoChannel = 13
+        self.ServoGENERALonAttachCallback(ServoChannel)
+
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo13onDetachCallback(self, HandlerSelf):
+
+        ServoChannel = 13
+        self.ServoGENERALonDetachCallback(ServoChannel)
+
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo13onErrorCallback(self, HandlerSelf, code, description):
+
+        ServoChannel = 13
+        self.ServoGENERALonErrorCallback(ServoChannel, code, description)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo13onPositionChangeCallback(self, HandlerSelf, UpdatedPositionFromBoard):
+
+        ServoChannel = 13
+        self.ServoGENERALonPositionChangeCallback(ServoChannel, UpdatedPositionFromBoard)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo13onVelocityChangeCallback(self, HandlerSelf, UpdatedVelocityFromBoard):
+
+        ServoChannel = 13
+        self.ServoGENERALonVelocityChangeCallback(ServoChannel, UpdatedVelocityFromBoard)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo14onAttachCallback(self, HandlerSelf):
+
+        ServoChannel = 14
+        self.ServoGENERALonAttachCallback(ServoChannel)
+
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo14onDetachCallback(self, HandlerSelf):
+
+        ServoChannel = 14
+        self.ServoGENERALonDetachCallback(ServoChannel)
+
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo14onErrorCallback(self, HandlerSelf, code, description):
+
+        ServoChannel = 14
+        self.ServoGENERALonErrorCallback(ServoChannel, code, description)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo14onPositionChangeCallback(self, HandlerSelf, UpdatedPositionFromBoard):
+
+        ServoChannel = 14
+        self.ServoGENERALonPositionChangeCallback(ServoChannel, UpdatedPositionFromBoard)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo14onVelocityChangeCallback(self, HandlerSelf, UpdatedVelocityFromBoard):
+
+        ServoChannel = 14
+        self.ServoGENERALonVelocityChangeCallback(ServoChannel, UpdatedVelocityFromBoard)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo15onAttachCallback(self, HandlerSelf):
+
+        ServoChannel = 15
+        self.ServoGENERALonAttachCallback(ServoChannel)
+
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo15onDetachCallback(self, HandlerSelf):
+
+        ServoChannel = 15
+        self.ServoGENERALonDetachCallback(ServoChannel)
+
+    ##########################################################################################################
+    ##########################################################################################################
+
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo15onErrorCallback(self, HandlerSelf, code, description):
+
+        ServoChannel = 15
+        self.ServoGENERALonErrorCallback(ServoChannel, code, description)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo15onPositionChangeCallback(self, HandlerSelf, UpdatedPositionFromBoard):
+
+        ServoChannel = 15
+        self.ServoGENERALonPositionChangeCallback(ServoChannel, UpdatedPositionFromBoard)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
+    def Servo15onVelocityChangeCallback(self, HandlerSelf, UpdatedVelocityFromBoard):
+
+        ServoChannel = 15
+        self.ServoGENERALonVelocityChangeCallback(ServoChannel, UpdatedVelocityFromBoard)
+
+    ##########################################################################################################
+    ##########################################################################################################
+    
+    ##########################################################################################################
+    ##########################################################################################################
     def getPreciseSecondsTimeStampString(self):
         ts = time.time()
 
@@ -1614,8 +2129,6 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
                         self.ServosList_EngagedState_NeedsToBeChangedFlag[ServoChannel] = 0
                     ###############################################
 
-                    #setVoltage()
-
             except PhidgetException as e:
                 print("PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class MainThread, Phidget Exception %i: %s" % (e.code, e.details))
             ##########################################################################################################
@@ -1703,7 +2216,8 @@ class PhidgetsAdvancedServo8MotorRCC0004_ReubenPython2and3Class(Frame): #Subclas
         self.DeviceInfo_Label["text"] = self.NameToDisplay_UserSet + \
                                          "\nDevice Name: " + self.DetectedDeviceName + \
                                          "\nDevice Serial Number: " + str(self.DetectedDeviceSerialNumber) + \
-                                         "\nDevice Version: " + str(self.DetectedDeviceVersion)
+                                         "\nDevice Version: " + str(self.DetectedDeviceVersion) + \
+                                         "\nDevice BoardEnglishName: " + str(self.DetectedBoardEnglishName)
 
         self.DeviceInfo_Label.grid(row=0, column=0, padx=10, pady=10, columnspan=1, rowspan=1)
         #################################################
